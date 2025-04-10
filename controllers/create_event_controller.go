@@ -17,8 +17,17 @@ func NewCreateEventController(usecase createevent.CreateEventUseCase) CreateEven
 }
 
 func (cec *CreateEventController) Perform(ctx *gin.Context) {
-	var input io.CreateEventInput
-	ctx.ShouldBindBodyWithJSON(&input)
+	input := io.CreateEventInput{}
+	err := ctx.ShouldBindJSON(&input)
+
+	if err != nil {
+		ctx.JSON(400, gin.H{
+			"message":    "Invalid input",
+			"error":      err.Error(),
+			"statusCode": 400,
+		})
+		return
+	}
 
 	result := cec.usecase.Execute(input)
 
