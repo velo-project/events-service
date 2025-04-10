@@ -1,6 +1,8 @@
 package io
 
-import "github.com/velo-project/events-service/core/entities"
+import (
+	"github.com/velo-project/events-service/core/entities"
+)
 
 type CreateEventOutput struct {
 	Message    string               `json:"message"`

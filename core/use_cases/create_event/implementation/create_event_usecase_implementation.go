@@ -1,34 +1,36 @@
 package usecaseImplementation
 
 import (
-	"github.com/velo-project/events-service/adapters/dao/repositories"
-	"github.com/velo-project/events-service/core/entities"
 	createevent "github.com/velo-project/events-service/core/use_cases/create_event"
+	"github.com/velo-project/events-service/core/use_cases/create_event/implementation/ports"
 	"github.com/velo-project/events-service/core/use_cases/create_event/io"
 )
 
 type CreateEventUseCase struct {
-	repository repositories.EventRepository
+	port ports.PersistNewEventPort
 }
 
-func NewCreateEventUseCase(repository repositories.EventRepository) createevent.CreateEventUseCase {
+func NewCreateEventUseCase(port ports.PersistNewEventPort) createevent.CreateEventUseCase {
 	return &CreateEventUseCase{
-		repository: repository,
+		port: port,
 	}
 }
 
 func (ceu *CreateEventUseCase) Execute(input io.CreateEventInput) io.CreateEventOutput {
-	event := entities.EventEntity{
-		Name:        input.Name,
-		Description: input.Description,
-		PhotoPath:   "",
-	}
+	portInput := mapCreateEventInputToPersistNewEventPortInput(input)
 
-	savedEntity := ceu.repository.CreateEvent(event)
+	savedEntity := ceu.port.Execute(portInput)
 
 	return io.CreateEventOutput{
 		Message:    "success",
-		Event:      savedEntity,
+		Event:      savedEntity.Event,
 		StatusCode: 201,
+	}
+}
+
+func mapCreateEventInputToPersistNewEventPortInput(usecaseInput io.CreateEventInput) ports.PersistNewEventPortInput {
+	return ports.PersistNewEventPortInput{
+		Name:        usecaseInput.Name,
+		Description: usecaseInput.Description,
 	}
 }
