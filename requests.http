@@ -1,0 +1,9 @@
+@url = http://localhost:8080
+
+POST {{url}}/api/v1/event
+Content-Type: "application/json"
+
+{
+  "name": "test event",
+  "description": "test event description"
+}
