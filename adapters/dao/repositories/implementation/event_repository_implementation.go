@@ -18,9 +18,9 @@ func NewEventRepository(db *gorm.DB) repositories.EventRepository {
 }
 
 func (eri *EventRepositoryImplementation) CreateEvent(event entities.EventEntity) entities.EventEntity {
-	persistanceEntity := mappers.EventToPersistanceTable(&event)
+	persistanceEntity := mappers.EventToPersistanceTable(event)
 
-	eri.db.Create(persistanceEntity)
+	eri.db.Create(&persistanceEntity)
 
-	return mappers.EventToDomainEntity(&persistanceEntity)
+	return mappers.EventToDomainEntity(persistanceEntity)
 }
