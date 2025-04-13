@@ -20,3 +20,31 @@ type EventEntity struct {
 	CreatedAt            time.Time            `json:"createdAt"`
 	UpdatedAt            time.Time            `json:"updatedAt"`
 }
+
+func (e *EventEntity) Cancel() {
+	if e.IsCanceled {
+		return
+	}
+	e.IsCanceled = true
+	e.UpdatedAt = time.Now()
+}
+
+func (e *EventEntity) Activate() {
+	if e.IsActive {
+		return
+	}
+	e.IsActive = true
+	e.UpdatedAt = time.Now()
+}
+
+func (e *EventEntity) Desactivate() {
+	if !e.IsActive {
+		return
+	}
+	e.IsActive = false
+	e.UpdatedAt = time.Now()
+}
+
+func (e *EventEntity) IsUpcoming() bool {
+	return time.Now().Before(e.WhenWillHappen)
+}
