@@ -1,0 +1,6 @@
+@Velo.EventsService.Api_HostAddress = http://localhost:5239
+
+GET {{Velo.EventsService.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

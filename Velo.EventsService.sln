@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Velo.EventsService.Api", "Velo.EventsService.Api\Velo.EventsService.Api.csproj", "{49B093CB-AA18-44DF-8181-24380F35AE52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Velo.EventsService.Core", "Velo.EventsService.Core\Velo.EventsService.Core.csproj", "{969BB232-DD1C-4C2D-9E1F-8D8B4AF467A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Velo.EventsService.Commands", "Velo.EventsService.Commands\Velo.EventsService.Commands.csproj", "{98ACFD6F-3425-4D57-B4C1-2DE1A45154EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Velo.EventsService.Queries", "Velo.EventsService.Queries\Velo.EventsService.Queries.csproj", "{4ECE825A-6519-4ABC-8FB8-B6386C62CB9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Velo.EventsService.Persistence", "Velo.EventsService.Persistence\Velo.EventsService.Persistence.csproj", "{8AD83DEF-9C23-49AE-8CD8-0F6397F2B50F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Velo.EventsService.Tests", "Velo.EventsService.Tests\Velo.EventsService.Tests.csproj", "{C61A3D70-1A1B-40A0-B23A-0C4CD0BFDD6F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{49B093CB-AA18-44DF-8181-24380F35AE52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49B093CB-AA18-44DF-8181-24380F35AE52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49B093CB-AA18-44DF-8181-24380F35AE52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49B093CB-AA18-44DF-8181-24380F35AE52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{969BB232-DD1C-4C2D-9E1F-8D8B4AF467A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{969BB232-DD1C-4C2D-9E1F-8D8B4AF467A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{969BB232-DD1C-4C2D-9E1F-8D8B4AF467A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{969BB232-DD1C-4C2D-9E1F-8D8B4AF467A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98ACFD6F-3425-4D57-B4C1-2DE1A45154EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98ACFD6F-3425-4D57-B4C1-2DE1A45154EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98ACFD6F-3425-4D57-B4C1-2DE1A45154EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98ACFD6F-3425-4D57-B4C1-2DE1A45154EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ECE825A-6519-4ABC-8FB8-B6386C62CB9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ECE825A-6519-4ABC-8FB8-B6386C62CB9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ECE825A-6519-4ABC-8FB8-B6386C62CB9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ECE825A-6519-4ABC-8FB8-B6386C62CB9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AD83DEF-9C23-49AE-8CD8-0F6397F2B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AD83DEF-9C23-49AE-8CD8-0F6397F2B50F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AD83DEF-9C23-49AE-8CD8-0F6397F2B50F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AD83DEF-9C23-49AE-8CD8-0F6397F2B50F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C61A3D70-1A1B-40A0-B23A-0C4CD0BFDD6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C61A3D70-1A1B-40A0-B23A-0C4CD0BFDD6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C61A3D70-1A1B-40A0-B23A-0C4CD0BFDD6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C61A3D70-1A1B-40A0-B23A-0C4CD0BFDD6F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
