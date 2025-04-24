@@ -10,4 +10,9 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Velo.EventsService.Commands\Velo.EventsService.Commands.csproj" />
+      <ProjectReference Include="..\Velo.EventsService.Persistence\Velo.EventsService.Persistence.csproj" />
+    </ItemGroup>
+
 </Project>
