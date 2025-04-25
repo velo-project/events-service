@@ -9,6 +9,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddMediator();
         builder.Services.AddCommands();
+        builder.Services.AddPersistence();
         
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
