@@ -15,7 +15,7 @@ public class EventEntity
     public string Name { get; set; } = string.Empty;
     
     [Column("description_event")]
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; }
 
     [Column("photo_event")]
     public string? PhotoPath { get; set; }
