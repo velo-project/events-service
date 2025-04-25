@@ -6,10 +6,14 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Configuration.AddJsonFile(
+            $"appsettings.{builder.Environment.EnvironmentName}.json", optional: false);
+        
         // Add services to the container.
         builder.Services.AddMediator();
         builder.Services.AddCommands();
-        builder.Services.AddPersistence();
+        builder.Services.AddPersistence(
+            builder.Configuration);
         
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
