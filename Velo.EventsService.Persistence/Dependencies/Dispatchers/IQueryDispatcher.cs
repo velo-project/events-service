@@ -1,6 +1,6 @@
-using Velo.EventsService.Core.Dependencies.Contracts;
+using Velo.EventsService.Persistence.Dependencies.Contracts;
 
-namespace Velo.EventsService.Core.Dependencies.Dispatchers;
+namespace Velo.EventsService.Persistence.Dependencies.Dispatchers;
 
 public interface IQueryDispatcher
 {

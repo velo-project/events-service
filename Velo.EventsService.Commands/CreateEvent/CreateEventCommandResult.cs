@@ -1,4 +1,4 @@
-using Velo.EventsService.Core.Entities;
+using Velo.EventsService.Persistence.Entities;
 
 namespace Velo.EventsService.Commands.CreateEvent;
 

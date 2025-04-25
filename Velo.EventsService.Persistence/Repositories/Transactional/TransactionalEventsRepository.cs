@@ -1,6 +1,6 @@
-using Velo.EventsService.Core.Contracts;
-using Velo.EventsService.Core.Entities;
 using Velo.EventsService.Persistence.Context;
+using Velo.EventsService.Persistence.Contracts;
+using Velo.EventsService.Persistence.Entities;
 
 namespace Velo.EventsService.Persistence.Repositories.Transactional;
 

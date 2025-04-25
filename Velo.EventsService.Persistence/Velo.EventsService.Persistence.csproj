@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Velo.EventsService.Core\Velo.EventsService.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
     </ItemGroup>
 

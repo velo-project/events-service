@@ -1,6 +1,7 @@
-using Velo.EventsService.Core.Contracts;
-using Velo.EventsService.Core.Dependencies.Handlers;
-using Velo.EventsService.Core.Entities;
+
+using Velo.EventsService.Persistence.Contracts;
+using Velo.EventsService.Persistence.Dependencies.Handlers;
+using Velo.EventsService.Persistence.Entities;
 
 namespace Velo.EventsService.Commands.CreateEvent.Handler;
 

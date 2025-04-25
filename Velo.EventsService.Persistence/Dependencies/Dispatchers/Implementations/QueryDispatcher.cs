@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
-using Velo.EventsService.Core.Dependencies.Contracts;
-using Velo.EventsService.Core.Dependencies.Handlers;
+using Velo.EventsService.Persistence.Dependencies.Contracts;
+using Velo.EventsService.Persistence.Dependencies.Handlers;
 
-namespace Velo.EventsService.Core.Dependencies.Dispatchers.Implementations;
+namespace Velo.EventsService.Persistence.Dependencies.Dispatchers.Implementations;
 
 public class QueryDispatcher(IServiceProvider serviceProvider) : IQueryDispatcher
 {

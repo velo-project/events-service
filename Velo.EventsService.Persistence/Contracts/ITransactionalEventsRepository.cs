@@ -1,6 +1,6 @@
-using Velo.EventsService.Core.Entities;
+using Velo.EventsService.Persistence.Entities;
 
-namespace Velo.EventsService.Core.Contracts;
+namespace Velo.EventsService.Persistence.Contracts;
 
 public interface ITransactionalEventsRepository
 {

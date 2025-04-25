@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Velo.EventsService.Core\Velo.EventsService.Core.csproj" />
+      <ProjectReference Include="..\Velo.EventsService.Persistence\Velo.EventsService.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

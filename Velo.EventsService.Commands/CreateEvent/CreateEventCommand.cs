@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Velo.EventsService.Core.Dependencies.Contracts;
+using Velo.EventsService.Persistence.Dependencies.Contracts;
 
 namespace Velo.EventsService.Commands.CreateEvent;
 

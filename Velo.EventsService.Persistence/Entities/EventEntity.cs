@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Velo.EventsService.Core.Entities;
+namespace Velo.EventsService.Persistence.Entities;
 
 [Table("tb_events")]
 public class EventEntity

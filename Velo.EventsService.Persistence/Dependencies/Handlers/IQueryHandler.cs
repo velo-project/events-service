@@ -1,6 +1,6 @@
-using Velo.EventsService.Core.Dependencies.Contracts;
+using Velo.EventsService.Persistence.Dependencies.Contracts;
 
-namespace Velo.EventsService.Core.Dependencies.Handlers;
+namespace Velo.EventsService.Persistence.Dependencies.Handlers;
 
 public interface IQueryHandler<in TQuery, TQueryResult> where TQuery : IQuery
 {
