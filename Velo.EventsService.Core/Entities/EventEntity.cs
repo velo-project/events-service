@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Velo.EventsService.Core.Entities;
 
+[Table("tb_events")]
 public class EventEntity
 {
     [Key]
