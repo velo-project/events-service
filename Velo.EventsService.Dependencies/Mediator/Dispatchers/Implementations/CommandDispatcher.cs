@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Velo.EventsService.Dependencies.Mediator.Contracts;
+using Velo.EventsService.Dependencies.Mediator.Exceptions;
 using Velo.EventsService.Dependencies.Mediator.Handlers;
 
 namespace Velo.EventsService.Dependencies.Mediator.Dispatchers.Implementations;
@@ -13,12 +14,7 @@ public class CommandDispatcher(IServiceProvider serviceProvider) : ICommandDispa
         var handler = serviceProvider.GetRequiredService<ICommandHandler<TCommand, TCommandResult>>();
 
         if (handler == null)
-        {
-            var message = $"No Handler Found for <{typeof(TCommand).Namespace}, {typeof(TCommandResult).Namespace}>";
-            logger.LogError(message);
-            throw new Exception(message);
-        }
-
+            throw new NoCommandHandlerFoundException<TCommand, TCommandResult>();
         try
         {
             logger.LogInformation("Dispatching command: {CommandName}", typeof(TCommand).Name);

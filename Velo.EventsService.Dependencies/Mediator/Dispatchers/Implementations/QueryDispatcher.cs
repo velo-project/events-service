@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Velo.EventsService.Dependencies.Mediator.Contracts;
+using Velo.EventsService.Dependencies.Mediator.Exceptions;
 using Velo.EventsService.Dependencies.Mediator.Handlers;
 
 namespace Velo.EventsService.Dependencies.Mediator.Dispatchers.Implementations;
@@ -13,11 +14,7 @@ public class QueryDispatcher(IServiceProvider serviceProvider) : IQueryDispatche
         var handler = serviceProvider.GetRequiredService<IQueryHandler<TQuery, TQueryResult>>();
 
         if (handler == null)
-        {
-            var message = $"No Handler Found for <{typeof(TQuery).Namespace}, {typeof(TQueryResult).Namespace}>";
-            logger.LogError(message);
-            throw new Exception(message);
-        }
+            throw new NoQueryHandlerFoundException<TQuery, TQueryResult>();
 
         try
         {
