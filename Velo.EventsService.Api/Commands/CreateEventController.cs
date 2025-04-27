@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Velo.EventsService.Commands.CreateEvent;
-using Velo.EventsService.Persistence.Dependencies.Dispatchers;
+using Velo.EventsService.Dependencies.Mediator.Dispatchers;
 
 namespace Velo.EventsService.Api.Commands;
 

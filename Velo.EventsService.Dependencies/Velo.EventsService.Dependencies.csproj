@@ -7,8 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Velo.EventsService.Dependencies\Velo.EventsService.Dependencies.csproj" />
-      <ProjectReference Include="..\Velo.EventsService.Persistence\Velo.EventsService.Persistence.csproj" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
     </ItemGroup>
 
 </Project>

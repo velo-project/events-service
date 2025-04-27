@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Velo.EventsService.Commands.CreateEvent;
 using Velo.EventsService.Commands.CreateEvent.Handler;
-using Velo.EventsService.Core.Dependencies.Dispatchers.Implementations;
+using Velo.EventsService.Dependencies.Mediator.Dispatchers;
+using Velo.EventsService.Dependencies.Mediator.Dispatchers.Implementations;
+using Velo.EventsService.Dependencies.Mediator.Handlers;
 using Velo.EventsService.Persistence.Context;
 using Velo.EventsService.Persistence.Contracts;
-using Velo.EventsService.Persistence.Dependencies.Dispatchers;
-using Velo.EventsService.Persistence.Dependencies.Dispatchers.Implementations;
-using Velo.EventsService.Persistence.Dependencies.Handlers;
 using Velo.EventsService.Persistence.Repositories.Transactional;
 
 namespace Velo.EventsService.Api;

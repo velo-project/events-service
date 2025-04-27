@@ -1,6 +1,6 @@
-using Velo.EventsService.Persistence.Dependencies.Contracts;
+using Velo.EventsService.Dependencies.Mediator.Contracts;
 
-namespace Velo.EventsService.Persistence.Dependencies.Handlers;
+namespace Velo.EventsService.Dependencies.Mediator.Handlers;
 
 public interface ICommandHandler<in TCommand, TCommandResult> where TCommand : ICommand
 {

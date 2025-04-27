@@ -1,6 +1,6 @@
-using Velo.EventsService.Persistence.Dependencies.Contracts;
+using Velo.EventsService.Dependencies.Mediator.Contracts;
 
-namespace Velo.EventsService.Persistence.Dependencies.Dispatchers;
+namespace Velo.EventsService.Dependencies.Mediator.Dispatchers;
 
 public interface ICommandDispatcher
 {
