@@ -16,21 +16,20 @@ public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConf
         cancellationToken.ThrowIfCancellationRequested();
 
         var imagePath = await ProcessAndSaveImage(command);
-        var eventToSave = ExtractAndPrepareEventFrom(command);
-        
-        eventToSave.PhotoPath = imagePath;
+        var eventToSave = ExtractAndPrepareEventFrom(command, imagePath);
         
         var savedEvent = await eventsRepository.PersistEventAsync(eventToSave, cancellationToken);
 
-        savedEvent.PhotoPath = string.Empty;
+        if (savedEvent.PhotoPath != null)
+            savedEvent.PhotoPath = null;
 
         return PrepareSuccessResult(savedEvent);
     }
 
-    private async Task<string> ProcessAndSaveImage(CreateEventCommand command)
+    private async Task<string?> ProcessAndSaveImage(CreateEventCommand command)
     {
         if (command.PhotoBytes.Length == 0)
-            return string.Empty;
+            return null;
 
         var folderCombination = $"{DateTime.UtcNow.Year}/{DateTime.UtcNow.Month}/{DateTime.UtcNow.Day}";
         var folderPath = Path.Combine(_imageFolderPath, folderCombination);
@@ -45,7 +44,7 @@ public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConf
         return filePath;
     }
 
-    private static EventEntity ExtractAndPrepareEventFrom(CreateEventCommand command)
+    private static EventEntity ExtractAndPrepareEventFrom(CreateEventCommand command, string? imagePath)
     {
         return new EventEntity()
         {
@@ -54,6 +53,7 @@ public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConf
             IsActive = true,
             IsCanceled = false,
             WhenWillHappen = command.WhenWillHappen,
+            PhotoPath = imagePath,
             CreatedAt = DateTime.UtcNow
         };
     }

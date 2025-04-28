@@ -24,6 +24,9 @@ public class CreateEventController : ControllerBase
 
     private static async Task<byte[]> GeneratePhotoBytesFrom(CreateEventDTO dto)
     {
+        if (dto.File == null)
+            return [];
+        
         using var stream = new MemoryStream();
         await dto.File.CopyToAsync(stream);
         return stream.ToArray();

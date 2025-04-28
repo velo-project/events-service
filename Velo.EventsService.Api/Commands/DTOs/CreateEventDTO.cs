@@ -11,7 +11,5 @@ public class CreateEventDTO
     
     [Required]
     public DateTime WhenWillHappen { get; set; }
-    
-    [Required]
-    public IFormFile File { get; set; }
+    public IFormFile? File { get; set; }
 }
