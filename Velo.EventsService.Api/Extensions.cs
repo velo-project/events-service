@@ -36,9 +36,10 @@ public static class Extensions
 
         services.AddDbContext<DatabaseContext>(options =>
         {
-            options.UseNpgsql(connectionString, m =>
+            options.UseNpgsql(connectionString, npgssqlOptions =>
             {
-                m.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName);
+                npgssqlOptions.UseVector();
+                npgssqlOptions.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName);
             });
         });
         services.AddScoped<IEventsRepository, EventsRepository>();
