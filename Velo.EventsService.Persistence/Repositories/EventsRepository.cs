@@ -2,9 +2,9 @@ using Velo.EventsService.Persistence.Context;
 using Velo.EventsService.Persistence.Contracts;
 using Velo.EventsService.Persistence.Entities;
 
-namespace Velo.EventsService.Persistence.Repositories.Transactional;
+namespace Velo.EventsService.Persistence.Repositories;
 
-public class TransactionalEventsRepository(DatabaseContext context) : ITransactionalEventsRepository
+public class EventsRepository(DatabaseContext context) : IEventsRepository
 {
     public async Task<EventEntity> PersistEventAsync(EventEntity eventEntity, CancellationToken cancellationToken)
     {

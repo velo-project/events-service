@@ -6,7 +6,7 @@ using Velo.EventsService.Dependencies.Mediator.Dispatchers.Implementations;
 using Velo.EventsService.Dependencies.Mediator.Handlers;
 using Velo.EventsService.Persistence.Context;
 using Velo.EventsService.Persistence.Contracts;
-using Velo.EventsService.Persistence.Repositories.Transactional;
+using Velo.EventsService.Persistence.Repositories;
 
 namespace Velo.EventsService.Api;
 
@@ -34,6 +34,6 @@ public static class Extensions
                 m.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName);
             });
         });
-        services.AddScoped<ITransactionalEventsRepository, TransactionalEventsRepository>();
+        services.AddScoped<IEventsRepository, EventsRepository>();
     }
 }

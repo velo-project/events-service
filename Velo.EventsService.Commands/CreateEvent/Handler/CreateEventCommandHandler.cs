@@ -6,7 +6,7 @@ using Velo.EventsService.Persistence.Entities;
 
 namespace Velo.EventsService.Commands.CreateEvent.Handler;
 
-public class CreateEventCommandHandler(ITransactionalEventsRepository eventsRepository, IConfiguration configuration)
+public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConfiguration configuration)
     : ICommandHandler<CreateEventCommand, CreateEventCommandResult>
 {
     private readonly string _imageFolderPath = configuration["ImageFolderPath"] ?? throw new InvalidOperationException();
