@@ -1,3 +1,5 @@
+using Velo.EventsService.Api.Middlewares;
+
 namespace Velo.EventsService.Api;
 
 public class Program
@@ -33,7 +35,7 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
+        app.UseMiddleware<HttpExceptionMiddleware>();
 
         app.MapControllers();
 
