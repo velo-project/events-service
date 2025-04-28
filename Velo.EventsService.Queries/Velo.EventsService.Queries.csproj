@@ -6,4 +6,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Velo.EventsService.Dependencies\Velo.EventsService.Dependencies.csproj" />
+      <ProjectReference Include="..\Velo.EventsService.Persistence\Velo.EventsService.Persistence.csproj" />
+    </ItemGroup>
+
 </Project>
