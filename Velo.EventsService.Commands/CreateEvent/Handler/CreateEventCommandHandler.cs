@@ -22,6 +22,8 @@ public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConf
         
         var savedEvent = await eventsRepository.PersistEventAsync(eventToSave, cancellationToken);
 
+        savedEvent.PhotoPath = string.Empty;
+
         return PrepareSuccessResult(savedEvent);
     }
 
@@ -40,7 +42,7 @@ public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConf
 
         await File.WriteAllBytesAsync(filePath, command.PhotoBytes);
 
-        return Path.Combine(folderCombination, imageName);
+        return filePath;
     }
 
     private static EventEntity ExtractAndPrepareEventFrom(CreateEventCommand command)
