@@ -18,6 +18,7 @@
       <ProjectReference Include="..\Velo.EventsService.Commands\Velo.EventsService.Commands.csproj" />
       <ProjectReference Include="..\Velo.EventsService.Dependencies\Velo.EventsService.Dependencies.csproj" />
       <ProjectReference Include="..\Velo.EventsService.Persistence\Velo.EventsService.Persistence.csproj" />
+      <ProjectReference Include="..\Velo.EventsService.Queries\Velo.EventsService.Queries.csproj" />
     </ItemGroup>
 
 </Project>

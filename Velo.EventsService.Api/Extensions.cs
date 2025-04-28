@@ -7,6 +7,8 @@ using Velo.EventsService.Dependencies.Mediator.Handlers;
 using Velo.EventsService.Persistence.Context;
 using Velo.EventsService.Persistence.Contracts;
 using Velo.EventsService.Persistence.Repositories;
+using Velo.EventsService.Queries.FetchEventImage;
+using Velo.EventsService.Queries.FetchEventImage.Handler;
 
 namespace Velo.EventsService.Api;
 
@@ -21,6 +23,11 @@ public static class Extensions
     public static void AddCommands(this IServiceCollection services)
     {
         services.AddScoped<ICommandHandler<CreateEventCommand, CreateEventCommandResult>, CreateEventCommandHandler>();
+    }
+
+    public static void AddQueries(this IServiceCollection services)
+    {
+        services.AddScoped<IQueryHandler<FetchEventImageQuery, FetchEventimageQueryResult>, FetchEventImageQueryHandler>();
     }
 
     public static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
