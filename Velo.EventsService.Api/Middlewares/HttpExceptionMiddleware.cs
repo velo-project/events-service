@@ -32,5 +32,19 @@ public class HttpExceptionMiddleware
             var jsonResponse = JsonSerializer.Serialize(response);
             await context.Response.WriteAsync(jsonResponse);
         }
+        catch (OperationCanceledException)
+        {
+            context.Response.StatusCode = 499;
+            context.Response.ContentType = "application/json";
+
+            var response = new
+            {
+                Message = "Client Closed Request",
+                StatusCode = 499
+            };
+
+            var jsonResponse = JsonSerializer.Serialize(response);
+            await context.Response.WriteAsync(jsonResponse);
+        }
     }
 }
