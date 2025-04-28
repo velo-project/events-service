@@ -29,8 +29,9 @@ public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConf
     {
         if (command.PhotoBytes.Length == 0)
             return string.Empty;
-        
-        var folderPath = Path.Combine(_imageFolderPath, $"{DateTime.UtcNow.Year}/{DateTime.UtcNow.Month}/{DateTime.UtcNow.Day}");
+
+        var folderCombination = $"{DateTime.UtcNow.Year}/{DateTime.UtcNow.Month}/{DateTime.UtcNow.Day}";
+        var folderPath = Path.Combine(_imageFolderPath, folderCombination);
         if (!Directory.Exists(folderPath))
             Directory.CreateDirectory(folderPath);
 
@@ -39,7 +40,7 @@ public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConf
 
         await File.WriteAllBytesAsync(filePath, command.PhotoBytes);
 
-        return filePath;
+        return Path.Combine(folderCombination, imageName);
     }
 
     private static EventEntity ExtractAndPrepareEventFrom(CreateEventCommand command)
