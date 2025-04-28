@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Velo.EventsService.Dependencies.Mediator.Handlers;
 using Velo.EventsService.Persistence.Context;
 using Velo.EventsService.Persistence.Entities;
+using Velo.EventsService.Queries.FetchEventImage.Handler.Exceptions;
 
 namespace Velo.EventsService.Queries.FetchEventImage.Handler;
 
@@ -23,10 +24,10 @@ public class FetchEventImageQueryHandler : IQueryHandler<FetchEventImageQuery, F
 
         // TODO: Refactor for NotFoundExceptions
         if (eventEntity == null)
-            throw new Exception();
+            throw new EventNotFoundHttpException(query.EventId);
 
         if (eventEntity.PhotoPath == null)
-            throw new Exception();
+            throw new EventWithNoImageHttpException();
         
         var image = await FetchImageBytesFrom(eventEntity.PhotoPath);
         return new FetchEventimageQueryResult()
