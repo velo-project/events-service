@@ -8,6 +8,8 @@ public class EventsRepository(DatabaseContext context) : IEventsRepository
 {
     public async Task<EventEntity> PersistEventAsync(EventEntity eventEntity, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+        
         var result = await context.Events.AddAsync(eventEntity, cancellationToken);
         
         await context.SaveChangesAsync(cancellationToken);

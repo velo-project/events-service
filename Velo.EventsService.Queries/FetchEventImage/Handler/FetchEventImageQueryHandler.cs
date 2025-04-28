@@ -19,6 +19,8 @@ public class FetchEventImageQueryHandler : IQueryHandler<FetchEventImageQuery, F
     
     public async Task<FetchEventimageQueryResult> Handle(FetchEventImageQuery query, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+        
         var eventEntity = await _events.Where(_ => _.Id == query.EventId)
             .SingleOrDefaultAsync(cancellationToken);
 
