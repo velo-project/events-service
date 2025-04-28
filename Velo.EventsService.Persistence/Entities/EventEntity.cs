@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using Pgvector;
 
 namespace Velo.EventsService.Persistence.Entities;
 
@@ -25,6 +27,10 @@ public class EventEntity
     
     [Column("canceled_event")]
     public bool IsCanceled { get; set; }
+
+    [JsonIgnore]
+    [Column("embeddings_event", TypeName = "vector(3072)")]
+    public Vector? Embeddings { get; set; }
     
     [Column("when_will_happen_event")]
     public DateTime WhenWillHappen { get; set; }
