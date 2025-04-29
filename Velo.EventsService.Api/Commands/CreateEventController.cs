@@ -7,6 +7,7 @@ namespace Velo.EventsService.Api.Commands;
 
 [ApiController]
 [Route("/api")]
+[Tags("Create Event", "Event Management")]
 public class CreateEventController : ControllerBase
 {
     [HttpPost("v1/event")]

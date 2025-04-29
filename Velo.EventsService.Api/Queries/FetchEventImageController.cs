@@ -6,6 +6,7 @@ namespace Velo.EventsService.Api.Queries;
 
 [ApiController]
 [Route("/api")]
+[Tags("Images", "Get Event", "Event Management")]
 public class FetchEventImageController : Controller
 {
     [HttpGet("v1/event/image/{id:int}")]
