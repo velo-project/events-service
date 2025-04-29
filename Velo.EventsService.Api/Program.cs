@@ -13,6 +13,7 @@ public class Program
         
         // Add services to the container.
         builder.Services.AddMediator();
+        builder.Services.AddGemini();
         builder.Services.AddCommands();
         builder.Services.AddQueries();
         builder.Services.AddPersistence(
