@@ -7,5 +7,5 @@ public class EmbeddingsResponseModel
 
 public class EmbeddingsResponse
 {
-    public List<decimal> Values { get; set; } = [];
+    public List<float> Values { get; set; } = [];
 }
