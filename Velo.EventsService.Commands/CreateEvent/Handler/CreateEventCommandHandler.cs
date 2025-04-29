@@ -1,12 +1,14 @@
 
 using Microsoft.Extensions.Configuration;
+using Pgvector;
+using Velo.EventsService.Dependencies.Gemini;
 using Velo.EventsService.Dependencies.Mediator.Handlers;
 using Velo.EventsService.Persistence.Contracts;
 using Velo.EventsService.Persistence.Entities;
 
 namespace Velo.EventsService.Commands.CreateEvent.Handler;
 
-public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConfiguration configuration)
+public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConfiguration configuration, IGeminiService geminiService)
     : ICommandHandler<CreateEventCommand, CreateEventCommandResult>
 {
     private readonly string _imageFolderPath = configuration["ImageFolderPath"] ?? throw new InvalidOperationException();
@@ -17,6 +19,7 @@ public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConf
 
         var imagePath = await ProcessAndSaveImage(command);
         var eventToSave = ExtractAndPrepareEventFrom(command, imagePath);
+        eventToSave = await PrepareAndGenerateEmbeddings(eventToSave);
         
         var savedEvent = await eventsRepository.PersistEventAsync(eventToSave, cancellationToken);
 
@@ -24,6 +27,14 @@ public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConf
             savedEvent.PhotoPath = null;
 
         return PrepareSuccessResult(savedEvent);
+    }
+
+    private async Task<EventEntity> PrepareAndGenerateEmbeddings(EventEntity eventEntity)
+    {
+        var embeddingsToGenerate = $"{eventEntity.Name} {eventEntity.Description}";
+        var response = await geminiService.GenerateEmbeddingsAsync(embeddingsToGenerate);
+        eventEntity.Embeddings = new Vector(response.Embedding.Values.ToArray());
+        return eventEntity;
     }
 
     private async Task<string?> ProcessAndSaveImage(CreateEventCommand command)
