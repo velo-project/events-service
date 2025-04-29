@@ -27,19 +27,29 @@ public class GeminiService : IGeminiService
         var body = new
         {
             Model = _geminiModel,
-            Parts = new[]
+            Content = new
             {
-                new { Text = text }
+                Parts = new[]
+                {
+                    new { Text = text }
+                },    
             },
             TaskType = "SEMANTIC_SIMILARITY"
         };
-        var jsonBody = JsonSerializer.Serialize(body);
+        var jsonBody = JsonSerializer.Serialize(body, new JsonSerializerOptions()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        });
         var content = new StringContent(jsonBody);
         var response = await _httpClient.PostAsync(_geminiApiCurl, content);
 
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<EmbeddingsResponseModel>(responseContent) ?? new EmbeddingsResponseModel();
+        return JsonSerializer.Deserialize<EmbeddingsResponseModel>(responseContent, new JsonSerializerOptions()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        }) ?? new EmbeddingsResponseModel();
     }
 }
