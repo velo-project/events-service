@@ -23,9 +23,6 @@ public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConf
         
         var savedEvent = await eventsRepository.PersistEventAsync(eventToSave, cancellationToken);
 
-        if (savedEvent.PhotoPath != null)
-            savedEvent.PhotoPath = null;
-
         return PrepareSuccessResult(savedEvent);
     }
 

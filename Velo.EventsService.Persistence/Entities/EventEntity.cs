@@ -20,6 +20,7 @@ public class EventEntity
     public string? Description { get; set; }
 
     [Column("photo_event")]
+    [JsonIgnore]
     public string? PhotoPath { get; set; }
     
     [Column("active_event")]
