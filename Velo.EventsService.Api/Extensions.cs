@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Velo.EventsService.Commands.CreateEvent;
 using Velo.EventsService.Commands.CreateEvent.Handler;
+using Velo.EventsService.Dependencies.FileManager;
+using Velo.EventsService.Dependencies.FileManager.Services;
 using Velo.EventsService.Dependencies.Gemini;
 using Velo.EventsService.Dependencies.Gemini.Services;
 using Velo.EventsService.Dependencies.Mediator.Dispatchers;
@@ -25,6 +27,11 @@ public static class Extensions
     public static void AddGemini(this IServiceCollection services)
     {
         services.AddHttpClient<IGeminiService, GeminiService>();
+    }
+
+    public static void AddFileManager(this IServiceCollection services)
+    {
+        services.AddScoped<IFileService, FileService>();
     }
 
     public static void AddCommands(this IServiceCollection services)

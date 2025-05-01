@@ -1,6 +1,7 @@
 
 using Microsoft.Extensions.Configuration;
 using Pgvector;
+using Velo.EventsService.Dependencies.FileManager;
 using Velo.EventsService.Dependencies.Gemini;
 using Velo.EventsService.Dependencies.Mediator.Handlers;
 using Velo.EventsService.Persistence.Contracts;
@@ -8,7 +9,7 @@ using Velo.EventsService.Persistence.Entities;
 
 namespace Velo.EventsService.Commands.CreateEvent.Handler;
 
-public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConfiguration configuration, IGeminiService geminiService)
+public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConfiguration configuration, IGeminiService geminiService, IFileService fileService)
     : ICommandHandler<CreateEventCommand, CreateEventCommandResult>
 {
     private readonly string _imageFolderPath = configuration["ImageFolderPath"] ?? throw new InvalidOperationException();
@@ -34,22 +35,9 @@ public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConf
         return eventEntity;
     }
 
-    private async Task<string?> ProcessAndSaveImage(CreateEventCommand command)
+    private Task<string?> ProcessAndSaveImage(CreateEventCommand command)
     {
-        if (command.PhotoBytes.Length == 0)
-            return null;
-
-        var folderCombination = $"{DateTime.UtcNow.Year}/{DateTime.UtcNow.Month}/{DateTime.UtcNow.Day}";
-        var folderPath = Path.Combine(_imageFolderPath, folderCombination);
-        if (!Directory.Exists(folderPath))
-            Directory.CreateDirectory(folderPath);
-
-        var imageName = Guid.NewGuid().ToString().Replace("-", "") + ".png";
-        var filePath = Path.Combine(folderPath, imageName);
-
-        await File.WriteAllBytesAsync(filePath, command.PhotoBytes);
-
-        return filePath;
+        return fileService.SavePhotoAsync(command.PhotoBytes);
     }
 
     private static EventEntity ExtractAndPrepareEventFrom(CreateEventCommand command, string? imagePath)
