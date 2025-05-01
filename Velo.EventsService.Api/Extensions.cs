@@ -13,6 +13,8 @@ using Velo.EventsService.Persistence.Contracts;
 using Velo.EventsService.Persistence.Repositories;
 using Velo.EventsService.Queries.FetchEventImage;
 using Velo.EventsService.Queries.FetchEventImage.Handler;
+using Velo.EventsService.Queries.FilterEventsBySimilarity;
+using Velo.EventsService.Queries.FilterEventsBySimilarity.Handler;
 
 namespace Velo.EventsService.Api;
 
@@ -42,6 +44,9 @@ public static class Extensions
     public static void AddQueries(this IServiceCollection services)
     {
         services.AddScoped<IQueryHandler<FetchEventImageQuery, FetchEventimageQueryResult>, FetchEventImageQueryHandler>();
+        services
+            .AddScoped<IQueryHandler<FilterEventsBySimilarityQuery, FilterEventsBySimilarityQueryResult>,
+                FilterEventsBySimilarityQueryHandler>();
     }
 
     public static void AddPersistence(this IServiceCollection services, IConfiguration configuration)
