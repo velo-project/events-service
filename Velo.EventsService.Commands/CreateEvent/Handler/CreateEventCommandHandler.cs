@@ -20,11 +20,11 @@ public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConf
 
         var imagePath = await ProcessAndSaveImage(command);
         var eventToSave = ExtractAndPrepareEventFrom(command, imagePath);
-        eventToSave = await PrepareAndGenerateEmbeddings(eventToSave);
         
-        var savedEvent = await eventsRepository.PersistEventAsync(eventToSave, cancellationToken);
+        eventToSave = await PrepareAndGenerateEmbeddings(eventToSave);
+        eventToSave = await eventsRepository.PersistEventAsync(eventToSave, cancellationToken);
 
-        return PrepareSuccessResult(savedEvent);
+        return PrepareSuccessResult(eventToSave);
     }
 
     private async Task<EventEntity> PrepareAndGenerateEmbeddings(EventEntity eventEntity)
