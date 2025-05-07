@@ -10,9 +10,9 @@ public class EventsRepository(DatabaseContext context) : IEventsRepository
     public async Task<EventEntity> PersistEventAsync(EventEntity eventEntity, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         var result = await context.Events.AddAsync(eventEntity, cancellationToken);
-        
+
         await context.SaveChangesAsync(cancellationToken);
 
         return result.Entity;
@@ -38,5 +38,16 @@ public class EventsRepository(DatabaseContext context) : IEventsRepository
         await context.SaveChangesAsync(cancellationToken);
 
         return eventEntity;
+    }
+
+    public async Task UpdateEventImageAsync(int eventId, string path, CancellationToken cancellationToken)
+    {
+        var eventEntity = await context.Events.FindAsync([eventId, cancellationToken], cancellationToken);
+        if (eventEntity == null)
+        {
+            throw new EntityNotFoundException();
+        }
+        eventEntity.PhotoPath = path;
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

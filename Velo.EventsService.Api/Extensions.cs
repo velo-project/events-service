@@ -3,6 +3,8 @@ using Velo.EventsService.Commands.CreateEvent;
 using Velo.EventsService.Commands.CreateEvent.Handler;
 using Velo.EventsService.Commands.UpdateEvent;
 using Velo.EventsService.Commands.UpdateEvent.Handler;
+using Velo.EventsService.Commands.UpdateImageFromEvent;
+using Velo.EventsService.Commands.UpdateImageFromEvent.Handler;
 using Velo.EventsService.Dependencies.FileManager;
 using Velo.EventsService.Dependencies.FileManager.Services;
 using Velo.EventsService.Dependencies.Gemini;
@@ -42,6 +44,7 @@ public static class Extensions
     {
         services.AddScoped<ICommandHandler<CreateEventCommand, CreateEventCommandResult>, CreateEventCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateEventCommand, UpdateEventCommandResult>, UpdateEventCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdateImageFromEventCommand, UpdateImageFromEventCommandResult>, UpdateImageFromEventCommandHandler>();
     }
 
     public static void AddQueries(this IServiceCollection services)
