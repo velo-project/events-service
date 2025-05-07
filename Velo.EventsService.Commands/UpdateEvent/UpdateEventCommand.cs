@@ -11,10 +11,7 @@ namespace Velo.EventsService.Commands.UpdateEvent
 {
     public class UpdateEventCommand : ICommand
     {
-        [Required]
         public int EventId { get; set; }
-
-        [Required]
         public required EventEntity Event { get; set; }
     }
 }
