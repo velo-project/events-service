@@ -6,9 +6,10 @@ namespace Velo.EventsService.Api.Queries;
 
 [ApiController]
 [Route("/api")]
+[Tags("Filter Events", "Search By Similarity", "Get Event", "Event Management")]
 public class FilterEventsBySimilarityController(IQueryDispatcher mediator) : ControllerBase
 {
-    [HttpGet("V1/event")]
+    [HttpGet("v1/event")]
     public async Task<IActionResult> PerformV1([FromQuery] string queryValue, CancellationToken cancellationToken)
     {
         var query = new FilterEventsBySimilarityQuery()
