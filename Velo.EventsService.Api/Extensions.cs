@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Velo.EventsService.Commands.CreateEvent;
 using Velo.EventsService.Commands.CreateEvent.Handler;
+using Velo.EventsService.Commands.UpdateEvent;
+using Velo.EventsService.Commands.UpdateEvent.Handler;
 using Velo.EventsService.Dependencies.FileManager;
 using Velo.EventsService.Dependencies.FileManager.Services;
 using Velo.EventsService.Dependencies.Gemini;
@@ -39,6 +41,7 @@ public static class Extensions
     public static void AddCommands(this IServiceCollection services)
     {
         services.AddScoped<ICommandHandler<CreateEventCommand, CreateEventCommandResult>, CreateEventCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdateEventCommand, UpdateEventCommandResult>, UpdateEventCommandHandler>();
     }
 
     public static void AddQueries(this IServiceCollection services)
