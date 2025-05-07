@@ -11,4 +11,8 @@
       <PackageReference Include="Pgvector.EntityFrameworkCore" Version="0.2.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Velo.EventsService.Dependencies\Velo.EventsService.Dependencies.csproj" />
+    </ItemGroup>
+
 </Project>

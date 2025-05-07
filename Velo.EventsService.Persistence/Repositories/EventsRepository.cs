@@ -1,6 +1,7 @@
 using Velo.EventsService.Persistence.Context;
 using Velo.EventsService.Persistence.Contracts;
 using Velo.EventsService.Persistence.Entities;
+using Velo.EventsService.Persistence.Repositories.Exceptions;
 
 namespace Velo.EventsService.Persistence.Repositories;
 
@@ -15,5 +16,24 @@ public class EventsRepository(DatabaseContext context) : IEventsRepository
         await context.SaveChangesAsync(cancellationToken);
 
         return result.Entity;
+    }
+
+    public async Task<EventEntity> UpdateEventAsync(int eventId, EventEntity eventEntity, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var entity = await context.Events.FindAsync([eventId, cancellationToken], cancellationToken);
+
+        if (entity == null)
+        {
+            throw new EntityNotFoundException();
+        }
+
+        context.Entry(entity)
+            .CurrentValues.SetValues(eventEntity);
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return eventEntity;
     }
 }
