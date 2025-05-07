@@ -9,10 +9,9 @@ using Velo.EventsService.Persistence.Entities;
 
 namespace Velo.EventsService.Commands.CreateEvent.Handler;
 
-public class CreateEventCommandHandler(IEventsRepository eventsRepository, IConfiguration configuration, IGeminiService geminiService, IFileService fileService)
+public class CreateEventCommandHandler(IEventsRepository eventsRepository, IGeminiService geminiService, IFileService fileService)
     : ICommandHandler<CreateEventCommand, CreateEventCommandResult>
 {
-    private readonly string _imageFolderPath = configuration["ImageFolderPath"] ?? throw new InvalidOperationException();
     
     public async Task<CreateEventCommandResult> Handle(CreateEventCommand command, CancellationToken cancellationToken)
     {
