@@ -6,6 +6,7 @@ namespace Velo.EventsService.Api.Commands
 {
     [ApiController]
     [Route("/api")]
+    [Tags("Update Event", "Event Management")]
     public class UpdateEventController : ControllerBase
     {
         [HttpPut("v1/event/{id:int}")]
