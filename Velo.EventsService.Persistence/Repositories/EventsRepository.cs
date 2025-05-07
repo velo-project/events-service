@@ -29,8 +29,11 @@ public class EventsRepository(DatabaseContext context) : IEventsRepository
             throw new EntityNotFoundException();
         }
 
-        context.Entry(entity)
-            .CurrentValues.SetValues(eventEntity);
+        entity.Name = eventEntity.Name;
+        entity.IsCanceled = eventEntity.IsCanceled;
+        entity.WhenWillHappen = eventEntity.WhenWillHappen;
+        entity.Description = eventEntity.Description;
+        entity.Embeddings = eventEntity.Embeddings;
 
         await context.SaveChangesAsync(cancellationToken);
 
