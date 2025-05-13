@@ -9,7 +9,6 @@ namespace Velo.EventsService.Persistence.Entities;
 public class EventEntity
 {
     [Key]
-    [JsonIgnore]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("id_event")]
     public int Id { get; set; }
