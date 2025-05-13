@@ -7,6 +7,19 @@ namespace Velo.EventsService.Persistence.Repositories;
 
 public class EventsRepository(DatabaseContext context) : IEventsRepository
 {
+    public async Task DeleteEventAsync(int id, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var result = await context.Events.FindAsync([id], cancellationToken: cancellationToken);
+
+        if (result == null)
+            throw new EntityNotFoundException();
+
+        context.Events.Remove(result);
+        await context.SaveChangesAsync();
+    }
+
     public async Task<EventEntity> PersistEventAsync(EventEntity eventEntity, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
