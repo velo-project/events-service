@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 
-	"gitlab.com/velo-company/services/events-service/internal/core/entities"
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
 )
 
@@ -25,7 +24,7 @@ const (
 	subscribeEventQuery                  = `INSERT INTO tb_user_events (fk_id_user, fk_id_event, participation_status_event) VALUES ($1, $2, $2)`
 )
 
-func (s subscribeEventAdapter) Execute(userParticipation entities.UserParticipation) error {
+func (s subscribeEventAdapter) Execute(userId int, eventId int) error {
 	tx, err := s.DB.BeginTx(context.Background(), nil)
 	if err != nil {
 		return err
@@ -34,7 +33,7 @@ func (s subscribeEventAdapter) Execute(userParticipation entities.UserParticipat
 	defer tx.Rollback()
 
 	var eventExists int
-	err = tx.QueryRow(verifyIfEventExistsQuery, userParticipation.EventID).Scan(&eventExists)
+	err = tx.QueryRow(verifyIfEventExistsQuery, eventId).Scan(&eventExists)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return errors.New("event does not exist")
@@ -43,7 +42,7 @@ func (s subscribeEventAdapter) Execute(userParticipation entities.UserParticipat
 	}
 
 	var userRegistered int
-	err = tx.QueryRow(verifyIfUserIsAlreadyRegisteredQuery, userParticipation.UserID, userParticipation.EventID).Scan(&userRegistered)
+	err = tx.QueryRow(verifyIfUserIsAlreadyRegisteredQuery, userId, eventId).Scan(&userRegistered)
 	if err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
 			return err
@@ -55,7 +54,7 @@ func (s subscribeEventAdapter) Execute(userParticipation entities.UserParticipat
 		return errors.New("user is already subscribed to this event")
 	}
 
-	_, err = tx.Exec(subscribeEventQuery, userParticipation.UserID, userParticipation.EventID)
+	_, err = tx.Exec(subscribeEventQuery, userId, eventId)
 	if err != nil {
 		return err
 	}
