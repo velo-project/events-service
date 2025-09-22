@@ -45,7 +45,5 @@ func (c cancelSubscriptionAdapter) Execute(eventId int, userId int) error {
 		return err
 	}
 
-	tx.Commit()
-
-	return nil
+	return tx.Commit()
 }
