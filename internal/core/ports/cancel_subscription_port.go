@@ -1,5 +1,5 @@
 package ports
 
 type CancelSubscriptionPort interface {
-	Execute(eventId int) error
+	Execute(eventId int, userId int) error
 }
