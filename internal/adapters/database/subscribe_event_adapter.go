@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
+	domainErrors "gitlab.com/velo-company/services/events-service/internal/core/errors"
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
 )
 
@@ -36,7 +37,7 @@ func (s subscribeEventAdapter) Execute(userId int, eventId int) error {
 	err = tx.QueryRow(verifyIfEventExistsQuery, eventId).Scan(&eventExists)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return errors.New("event does not exist")
+			return domainErrors.ErrEventNotFound
 		}
 		return err
 	}
@@ -51,7 +52,7 @@ func (s subscribeEventAdapter) Execute(userId int, eventId int) error {
 	}
 
 	if userRegistered == 1 {
-		return errors.New("user is already subscribed to this event")
+		return domainErrors.ErrUserAlreadySubscribed
 	}
 
 	_, err = tx.Exec(subscribeEventQuery, userId, eventId)
