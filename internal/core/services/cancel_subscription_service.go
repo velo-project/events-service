@@ -1,6 +1,11 @@
 package services
 
-import "gitlab.com/velo-company/services/events-service/internal/core/ports"
+import (
+	"errors"
+
+	domainErrors "gitlab.com/velo-company/services/events-service/internal/core/errors"
+	"gitlab.com/velo-company/services/events-service/internal/core/ports"
+)
 
 type CancelSubscriptionService interface {
 	Execute(input *CancelSubscriptionServiceInput) *CancelSubscriptionServiceOutput
@@ -43,6 +48,27 @@ func (c cancelSubscriptionService) Execute(input *CancelSubscriptionServiceInput
 	err = c.csp.Execute(input.EventId, input.UserId)
 
 	if err != nil {
+		if errors.Is(err, domainErrors.ErrBlockedCancelSubscription) {
+			return &CancelSubscriptionServiceOutput{
+				Message:    err.Error(),
+				StatusCode: 400,
+			}
+		}
+
+		if errors.Is(err, domainErrors.ErrEventNotFound) {
+			return &CancelSubscriptionServiceOutput{
+				Message:    err.Error(),
+				StatusCode: 404,
+			}
+		}
+
+		if errors.Is(err, domainErrors.ErrUserSubscriptionNotFound) {
+			return &CancelSubscriptionServiceOutput{
+				Message:    err.Error(),
+				StatusCode: 404,
+			}
+		}
+
 		return &CancelSubscriptionServiceOutput{
 			Message:    "Não foi possível cancelar sua inscrição",
 			StatusCode: 500,
