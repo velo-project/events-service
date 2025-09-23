@@ -17,8 +17,9 @@ type SubscribeEventServiceInput struct {
 }
 
 type SubscribeEventServiceOutput struct {
-	Message    string `json:"message"`
-	StatusCode int    `json:"status_code"`
+	Message    string  `json:"message"`
+	Code       *string `json:"code"`
+	StatusCode int     `json:"status_code"`
 }
 
 func NewSubscribeEventService(ue ports.UserExistsByIdPort, se ports.SubscribeEventPort) SubscribeEventService {
@@ -43,7 +44,7 @@ func (s subscribeEventService) Execute(input SubscribeEventServiceInput) Subscri
 		}
 	}
 
-	err = s.SubscribeEventPort.Execute(input.UserId, input.EventId)
+	code, err := s.SubscribeEventPort.Execute(input.UserId, input.EventId)
 
 	if err != nil {
 		return SubscribeEventServiceOutput{
@@ -54,6 +55,7 @@ func (s subscribeEventService) Execute(input SubscribeEventServiceInput) Subscri
 
 	return SubscribeEventServiceOutput{
 		Message:    "Inscrição confirmada",
+		Code:       code,
 		StatusCode: 201,
 	}
 }
