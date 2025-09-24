@@ -1,6 +1,11 @@
 package services
 
-import "gitlab.com/velo-company/services/events-service/internal/core/ports"
+import (
+	"errors"
+
+	domainErrors "gitlab.com/velo-company/services/events-service/internal/core/errors"
+	"gitlab.com/velo-company/services/events-service/internal/core/ports"
+)
 
 type SubscribeEventService interface {
 	Execute(input SubscribeEventServiceInput) SubscribeEventServiceOutput
@@ -47,6 +52,20 @@ func (s subscribeEventService) Execute(input SubscribeEventServiceInput) Subscri
 	code, err := s.SubscribeEventPort.Execute(input.UserId, input.EventId)
 
 	if err != nil {
+		if errors.Is(err, domainErrors.ErrEventNotFound) {
+			return SubscribeEventServiceOutput{
+				Message:    "Esse evento não existe",
+				StatusCode: 404,
+			}
+		}
+
+		if errors.Is(err, domainErrors.ErrUserAlreadySubscribed) {
+			return SubscribeEventServiceOutput{
+				Message:    "Você já está inscrito nesse evento",
+				StatusCode: 400,
+			}
+		}
+
 		return SubscribeEventServiceOutput{
 			Message:    "Não foi possível se inscrever nesse evento.",
 			StatusCode: 500,
