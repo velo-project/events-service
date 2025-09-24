@@ -8,7 +8,7 @@ import (
 )
 
 type SubscribeEventService interface {
-	Execute(input SubscribeEventServiceInput) SubscribeEventServiceOutput
+	Execute(input *SubscribeEventServiceInput) *SubscribeEventServiceOutput
 }
 
 type subscribeEventService struct {
@@ -34,16 +34,16 @@ func NewSubscribeEventService(ue ports.UserExistsByIdPort, se ports.SubscribeEve
 	}
 }
 
-func (s subscribeEventService) Execute(input SubscribeEventServiceInput) SubscribeEventServiceOutput {
+func (s subscribeEventService) Execute(input *SubscribeEventServiceInput) *SubscribeEventServiceOutput {
 	exists, err := s.UserExistsByIdPort.Execute(input.UserId)
 	if err != nil {
-		return SubscribeEventServiceOutput{
+		return &SubscribeEventServiceOutput{
 			Message:    "Estamos enfrentando problemas no momento. Tente novamento mais tarde",
 			StatusCode: 502,
 		}
 	}
 	if !exists {
-		return SubscribeEventServiceOutput{
+		return &SubscribeEventServiceOutput{
 			Message:    "Este usuário não existe",
 			StatusCode: 404,
 		}
@@ -53,26 +53,26 @@ func (s subscribeEventService) Execute(input SubscribeEventServiceInput) Subscri
 
 	if err != nil {
 		if errors.Is(err, domainErrors.ErrEventNotFound) {
-			return SubscribeEventServiceOutput{
+			return &SubscribeEventServiceOutput{
 				Message:    "Esse evento não existe",
 				StatusCode: 404,
 			}
 		}
 
 		if errors.Is(err, domainErrors.ErrUserAlreadySubscribed) {
-			return SubscribeEventServiceOutput{
+			return &SubscribeEventServiceOutput{
 				Message:    "Você já está inscrito nesse evento",
 				StatusCode: 400,
 			}
 		}
 
-		return SubscribeEventServiceOutput{
+		return &SubscribeEventServiceOutput{
 			Message:    "Não foi possível se inscrever nesse evento.",
 			StatusCode: 500,
 		}
 	}
 
-	return SubscribeEventServiceOutput{
+	return &SubscribeEventServiceOutput{
 		Message:    "Inscrição confirmada",
 		Code:       code,
 		StatusCode: 201,

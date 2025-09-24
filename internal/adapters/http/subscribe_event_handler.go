@@ -43,7 +43,7 @@ func (h *SubscribeEventHandler) Handle(c *gin.Context) {
 		EventId: eventId,
 	}
 
-	output := service.Execute(input)
+	output := service.Execute(&input)
 
 	c.JSON(output.StatusCode, output)
 }
