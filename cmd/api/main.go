@@ -42,12 +42,14 @@ func main() {
 
 	subscribeHandler := http.NewSubscribeEventHandler(db, grpcConn)
 	cancelSubscriptionHandler := http.NewCancelSubscriptionHandler(db)
+	confirmSubscriptionHandler := http.NewConfirmSubscriptionHandler(db, grpcConn)
 
 	pr := r.Group("/api/events/v1")
 	pr.Use(http.AuthMiddleware())
 	{
 		pr.POST("/subscribe/:id", subscribeHandler.Handle)
 		pr.POST("/cancel-subscription/:id", cancelSubscriptionHandler.Handle)
+		pr.POST("/confirm-subscription/:id", confirmSubscriptionHandler.Handle)
 	}
 
 	r.Run()
