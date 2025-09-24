@@ -19,19 +19,19 @@ type CancelSubscriptionServiceOutput struct {
 	StatusCode int    `json:"status_code"`
 }
 type cancelSubscriptionService struct {
-	csp ports.CancelSubscriptionPort
-	uei ports.UserExistsByIdPort
+	CancelSubscriptionPort ports.CancelSubscriptionPort
+	UserExistsByIdPort     ports.UserExistsByIdPort
 }
 
-func NewCancelSubscriptionService(csp ports.CancelSubscriptionPort, uei ports.UserExistsByIdPort) CancelSubscriptionService {
+func NewCancelSubscriptionService(CancelSubscriptionPort ports.CancelSubscriptionPort, UserExistsByIdPort ports.UserExistsByIdPort) CancelSubscriptionService {
 	return &cancelSubscriptionService{
-		csp: csp,
-		uei: uei,
+		CancelSubscriptionPort: CancelSubscriptionPort,
+		UserExistsByIdPort:     UserExistsByIdPort,
 	}
 }
 
 func (c cancelSubscriptionService) Execute(input *CancelSubscriptionServiceInput) *CancelSubscriptionServiceOutput {
-	exists, err := c.uei.Execute(input.UserId)
+	exists, err := c.UserExistsByIdPort.Execute(input.UserId)
 	if err != nil {
 		return &CancelSubscriptionServiceOutput{
 			Message:    "Estamos enfrentando problemas no momento. Tente novamento mais tarde",
@@ -45,7 +45,7 @@ func (c cancelSubscriptionService) Execute(input *CancelSubscriptionServiceInput
 		}
 	}
 
-	err = c.csp.Execute(input.EventId, input.UserId)
+	err = c.CancelSubscriptionPort.Execute(input.EventId, input.UserId)
 
 	if err != nil {
 		if errors.Is(err, domainErrors.ErrBlockedCancelSubscription) {
