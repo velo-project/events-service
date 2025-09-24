@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"gitlab.com/velo-company/services/events-service/internal/adapters/http"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -39,7 +40,15 @@ func main() {
 
 	r := gin.Default()
 
-	// pr := r.Group("/api/events/v1", http.AuthMiddleware())
+	subscribeHandler := http.NewSubscribeEventHandler(db, grpcConn)
+	cancelSubscriptionHandler := http.NewCancelSubscriptionHandler(db)
+
+	pr := r.Group("/api/events/v1")
+	pr.Use(http.AuthMiddleware())
+	{
+		pr.POST("/subscribe/:id", subscribeHandler.Handle)
+		pr.POST("/cancel-subscription/:id", cancelSubscriptionHandler.Handle)
+	}
 
 	r.Run()
 }
