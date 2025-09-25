@@ -2,7 +2,8 @@ package database
 
 import (
 	"database/sql"
-	"errors"
+
+	domainErrors "gitlab.com/velo-company/services/events-service/internal/core/errors"
 
 	"gitlab.com/velo-company/services/events-service/internal/core/entities"
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
