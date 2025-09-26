@@ -2,9 +2,12 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
+	"github.com/getsentry/sentry-go"
+	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -38,7 +41,14 @@ func main() {
 	}
 	defer grpcConn.Close()
 
+	if err := sentry.Init(sentry.ClientOptions{
+		Dsn: os.Getenv("SENTRY_DSN"),
+	}); err != nil {
+		fmt.Printf("Sentry initialization failed: %v\n", err)
+	}
+
 	r := gin.Default()
+	r.Use(sentrygin.New(sentrygin.Options{}))
 
 	subscribeHandler := http.NewSubscribeEventHandler(db, grpcConn)
 	cancelSubscriptionHandler := http.NewCancelSubscriptionHandler(db)

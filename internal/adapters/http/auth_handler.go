@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/getsentry/sentry-go"
+	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
@@ -39,6 +41,7 @@ func init() {
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
@@ -65,7 +68,13 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			if email, ok := claims["email"].(string); ok {
+
 				c.Set("email", email)
+				if hub := sentrygin.GetHubFromContext(c); hub != nil {
+					hub.WithScope(func(scope *sentry.Scope) {
+						scope.SetExtra("email", email)
+					})
+				}
 			}
 
 			if sub, ok := claims["sub"].(string); ok {
@@ -77,6 +86,11 @@ func AuthMiddleware() gin.HandlerFunc {
 				}
 
 				c.Set("userId", num)
+				if hub := sentrygin.GetHubFromContext(c); hub != nil {
+					hub.WithScope(func(scope *sentry.Scope) {
+						scope.SetExtra("user_id", num)
+					})
+				}
 				c.Next()
 
 				return
