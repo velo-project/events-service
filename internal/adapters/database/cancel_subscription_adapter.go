@@ -5,6 +5,7 @@ import (
 	errors "errors"
 	"time"
 
+	"gitlab.com/velo-company/services/events-service/internal/core/entities"
 	domainErrors "gitlab.com/velo-company/services/events-service/internal/core/errors"
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
 )
@@ -55,7 +56,7 @@ func (c cancelSubscriptionAdapter) Execute(eventId int, userId int) error {
 
 	defer tx.Rollback()
 
-	_, err = tx.Exec(cancelEventQuery, 2, eventId, userId)
+	_, err = tx.Exec(cancelEventQuery, entities.Cancelled, eventId, userId)
 
 	if err != nil {
 		return err

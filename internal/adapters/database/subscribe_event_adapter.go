@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"time"
 
+	"gitlab.com/velo-company/services/events-service/internal/core/entities"
 	domainErrors "gitlab.com/velo-company/services/events-service/internal/core/errors"
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
 )
@@ -58,7 +59,7 @@ func (s subscribeEventAdapter) Execute(userId int, eventId int) (*string, error)
 	}
 
 	code := generateCode()
-	_, err = tx.Exec(subscribeEventQuery, userId, eventId, code)
+	_, err = tx.Exec(subscribeEventQuery, userId, eventId, entities.Registered, code)
 	if err != nil {
 		return nil, err
 	}
