@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 
+	"cloud.google.com/go/storage"
 	"github.com/getsentry/sentry-go"
 	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
@@ -71,6 +72,17 @@ func main() {
 
 	embeddingsModel := geminiClient.EmbeddingModel(geminiModel)
 
+	gcsClient, err := storage.NewClient(ctx, option.WithCredentialsFile(os.Getenv("GCP_APPLICATION_CREDENTIALS")))
+
+	if err != nil {
+		panic(err)
+	}
+	defer gcsClient.Close()
+
+	bucketName := os.Getenv("GCP_BUCKET_NAME")
+
+	bucket := gcsClient.Bucket(bucketName)
+
 	r := gin.Default()
 	r.Use(sentrygin.New(sentrygin.Options{}))
 
@@ -78,7 +90,7 @@ func main() {
 	cancelSubscriptionHandler := http.NewCancelSubscriptionHandler(db)
 	confirmSubscriptionHandler := http.NewConfirmSubscriptionHandler(db, grpcConn)
 	getConfirmationCodeHandler := http.NewGetConfirmationCodeHandler(db, grpcConn)
-	createEventHandler := http.NewCreateEventHandler(db, embeddingsModel)
+	createEventHandler := http.NewCreateEventHandler(db, embeddingsModel, bucket)
 
 	pr := r.Group("/api/events/v1")
 	pr.Use(http.AuthMiddleware([]string{"USER", "ADMIN"}))

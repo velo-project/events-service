@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"io"
 	"time"
 
 	"gitlab.com/velo-company/services/events-service/internal/core/entities"
@@ -15,13 +16,16 @@ type CreateEventService interface {
 type createEventService struct {
 	CreateEventPort     ports.CreateEventPort
 	EmbeddingsGenerator ports.EmbeddingsGenerator
+	SaveFilePort        ports.SaveFilePort
 }
 
 type CreateEventServiceInput struct {
-	Name        string    `json:"name"`
-	Description *string   `json:"description"`
-	Location    *string   `json:"location"`
-	Date        time.Time `json:"date"`
+	Name           string    `form:"name"`
+	Description    *string   `form:"description"`
+	Location       *string   `form:"location"`
+	Date           time.Time `form:"date"`
+	Image          io.Reader `form:"-"`
+	ImageExtension string    `form:"-"`
 }
 
 type CreateEventServiceOutput struct {
@@ -30,10 +34,11 @@ type CreateEventServiceOutput struct {
 	StatusCode int    `json:"status_code"`
 }
 
-func NewCreateEventService(ce ports.CreateEventPort, eg ports.EmbeddingsGenerator) CreateEventService {
+func NewCreateEventService(ce ports.CreateEventPort, eg ports.EmbeddingsGenerator, sf ports.SaveFilePort) CreateEventService {
 	return &createEventService{
 		CreateEventPort:     ce,
 		EmbeddingsGenerator: eg,
+		SaveFilePort:        sf,
 	}
 }
 
@@ -59,6 +64,24 @@ func (s createEventService) Execute(input *CreateEventServiceInput) *CreateEvent
 		Embeddings:  embeddings.Values,
 	}
 
+	if input.Image != nil {
+		if !isValidExtension(input.ImageExtension) {
+			return &CreateEventServiceOutput{
+				Message:    "Extensão de imagem inválida",
+				StatusCode: 400,
+			}
+		}
+
+		imageUrl, err := s.SaveFilePort.Execute(input.Image)
+		if err != nil {
+			return &CreateEventServiceOutput{
+				Message:    "Não foi possível salvar a imagem",
+				StatusCode: 500,
+			}
+		}
+		event.ImageURL = imageUrl
+	}
+
 	eventId, err := s.CreateEventPort.Execute(&event)
 
 	if err != nil {
@@ -73,6 +96,10 @@ func (s createEventService) Execute(input *CreateEventServiceInput) *CreateEvent
 		EventId:    eventId,
 		StatusCode: 201,
 	}
+}
+
+func isValidExtension(ext string) bool {
+	return ext == ".jpg" || ext == ".jpeg" || ext == ".png"
 }
 
 func deref(s *string) string {
