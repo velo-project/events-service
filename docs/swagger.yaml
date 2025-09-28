@@ -1,0 +1,244 @@
+basePath: /api/events/v1
+definitions:
+  services.CancelSubscriptionServiceOutput:
+    properties:
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  services.ConfirmSubscriptionOutput:
+    properties:
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  services.CreateEventServiceOutput:
+    properties:
+      event_id:
+        type: integer
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  services.GetConfirmationCodeOutput:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  services.SubscribeEventServiceOutput:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  structs.H:
+    additionalProperties: true
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: soberkoder@swagger.io
+    name: API Support
+  description: This is the API for the Events Service
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Events Service API
+  version: "1.0"
+paths:
+  /cancel-subscription/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Cancel a subscription to an event
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.CancelSubscriptionServiceOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/structs.H'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/structs.H'
+      summary: Cancel a subscription to an event
+      tags:
+      - events
+  /confirm-subscription/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Confirm a subscription to an event
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Confirmation code
+        in: body
+        name: code
+        required: true
+        schema:
+          properties:
+            code:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.ConfirmSubscriptionOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/structs.H'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/structs.H'
+      summary: Confirm a subscription to an event
+      tags:
+      - events
+  /confirmation-code/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a confirmation code for an event
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.GetConfirmationCodeOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/structs.H'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/structs.H'
+      summary: Get a confirmation code for an event
+      tags:
+      - events
+  /create:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create an event
+      parameters:
+      - description: Event image
+        in: formData
+        name: image
+        required: true
+        type: file
+      - description: Event name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Event description
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: Event date
+        in: formData
+        name: date
+        required: true
+        type: string
+      - description: Event location
+        in: formData
+        name: location
+        required: true
+        type: string
+      - description: Event price
+        in: formData
+        name: price
+        required: true
+        type: number
+      - description: Event max attendees
+        in: formData
+        name: max_attendees
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/services.CreateEventServiceOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/structs.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/structs.H'
+      summary: Create an event
+      tags:
+      - events
+  /subscribe/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Subscribe to an event
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.SubscribeEventServiceOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/structs.H'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/structs.H'
+      summary: Subscribe to an event
+      tags:
+      - events
+swagger: "2.0"
