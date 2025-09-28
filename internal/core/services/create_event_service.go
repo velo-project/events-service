@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"time"
 
 	"gitlab.com/velo-company/services/events-service/internal/core/entities"
@@ -12,7 +13,8 @@ type CreateEventService interface {
 }
 
 type createEventService struct {
-	CreateEventPort ports.CreateEventPort
+	CreateEventPort     ports.CreateEventPort
+	EmbeddingsGenerator ports.EmbeddingsGenerator
 }
 
 type CreateEventServiceInput struct {
@@ -28,19 +30,33 @@ type CreateEventServiceOutput struct {
 	StatusCode int    `json:"status_code"`
 }
 
-func NewCreateEventService(ce ports.CreateEventPort) CreateEventService {
+func NewCreateEventService(ce ports.CreateEventPort, eg ports.EmbeddingsGenerator) CreateEventService {
 	return &createEventService{
-		CreateEventPort: ce,
+		CreateEventPort:     ce,
+		EmbeddingsGenerator: eg,
 	}
 }
 
 func (s createEventService) Execute(input *CreateEventServiceInput) *CreateEventServiceOutput {
 	// TODO: Add date parsing and validation
+	textToEmbeddings := fmt.Sprintf("%s %s", input.Name, deref(input.Description))
+	embeddings, err := s.EmbeddingsGenerator.Generate(ports.EmbeddingsGeneratorInput{
+		Text: textToEmbeddings,
+	})
+
+	if err != nil {
+		return &CreateEventServiceOutput{
+			Message:    "Não foi possível criar esse evento",
+			StatusCode: 500,
+		}
+	}
+
 	event := entities.Event{
 		Name:        input.Name,
 		Description: input.Description,
 		Location:    input.Location,
 		Date:        input.Date,
+		Embeddings:  embeddings.Values,
 	}
 
 	eventId, err := s.CreateEventPort.Execute(&event)
@@ -57,4 +73,11 @@ func (s createEventService) Execute(input *CreateEventServiceInput) *CreateEvent
 		EventId:    eventId,
 		StatusCode: 201,
 	}
+}
+
+func deref(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }

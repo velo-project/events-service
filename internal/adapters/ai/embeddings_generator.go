@@ -5,31 +5,20 @@ import (
 	"time"
 
 	"github.com/google/generative-ai-go/genai"
+	"gitlab.com/velo-company/services/events-service/internal/core/ports"
 )
-
-type EmbeddingsGeneratorInput struct {
-	Text string
-}
-
-type EmbeddingsGeneratorOutput struct {
-	Values []float32 `json:"embedding"`
-}
-
-type EmbeddingsGenerator interface {
-	Generate(input EmbeddingsGeneratorInput) (*EmbeddingsGeneratorOutput, error)
-}
 
 type embeddingsGenerator struct {
 	Model *genai.EmbeddingModel
 }
 
-func NewEmbeddingsGeneratorOutput(model *genai.EmbeddingModel) EmbeddingsGenerator {
+func NewEmbeddingsGeneratorOutput(model *genai.EmbeddingModel) ports.EmbeddingsGenerator {
 	return &embeddingsGenerator{
 		Model: model,
 	}
 }
 
-func (e embeddingsGenerator) Generate(input EmbeddingsGeneratorInput) (*EmbeddingsGeneratorOutput, error) {
+func (e embeddingsGenerator) Generate(input ports.EmbeddingsGeneratorInput) (*ports.EmbeddingsGeneratorOutput, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
@@ -38,7 +27,7 @@ func (e embeddingsGenerator) Generate(input EmbeddingsGeneratorInput) (*Embeddin
 		return nil, err
 	}
 
-	embeddings := &EmbeddingsGeneratorOutput{
+	embeddings := &ports.EmbeddingsGeneratorOutput{
 		Values: res.Embedding.Values,
 	}
 
