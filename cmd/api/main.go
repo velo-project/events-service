@@ -33,6 +33,9 @@ import (
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 // @host localhost:8080
 // @BasePath /api/events/v1
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
 func main() {
 	docs.SwaggerInfo.BasePath = "/api/events/v1"
 	if err := godotenv.Load(); err != nil {

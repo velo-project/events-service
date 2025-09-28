@@ -30,6 +30,7 @@ func NewGetConfirmationCodeHandler(db *sql.DB, grpc *grpc.ClientConn) *GetConfir
 // @Success 200 {object} services.GetConfirmationCodeOutput
 // @Failure 400 {object} services.GetConfirmationCodeOutput
 // @Failure 401 {object} services.GetConfirmationCodeOutput
+// @Security Bearer
 // @Router /confirmation-code/{id} [get]
 func (h *GetConfirmationCodeHandler) Handle(c *gin.Context) {
 	userId, exists := c.Get("userId")

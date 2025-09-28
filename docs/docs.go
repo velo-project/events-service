@@ -25,6 +25,11 @@ const docTemplate = `{
     "paths": {
         "/cancel-subscription/{id}": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Cancel a subscription to an event",
                 "consumes": [
                     "application/json"
@@ -76,6 +81,11 @@ const docTemplate = `{
         },
         "/confirm-subscription/{id}": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Confirm a subscription to an event",
                 "consumes": [
                     "application/json"
@@ -141,6 +151,11 @@ const docTemplate = `{
         },
         "/confirmation-code/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a confirmation code for an event",
                 "consumes": [
                     "application/json"
@@ -192,6 +207,11 @@ const docTemplate = `{
         },
         "/create": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Create an event",
                 "consumes": [
                     "multipart/form-data"
@@ -262,6 +282,11 @@ const docTemplate = `{
         },
         "/subscribe/{id}": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Subscribe to an event",
                 "consumes": [
                     "application/json"
@@ -376,6 +401,13 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

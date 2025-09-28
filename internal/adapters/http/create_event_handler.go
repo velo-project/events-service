@@ -39,6 +39,7 @@ func NewCreateEventHandler(db *sql.DB, md *genai.EmbeddingModel, bucket *storage
 // @Success 201 {object} services.CreateEventServiceOutput
 // @Failure 400 {object} services.CreateEventServiceOutput
 // @Failure 500 {object} services.CreateEventServiceOutput
+// @Security Bearer
 // @Router /create [post]
 func (h *CreateEventHandler) Handle(c *gin.Context) {
 	file, err := c.FormFile("image")

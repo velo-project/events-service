@@ -31,6 +31,7 @@ func NewCancelSubscriptionHandler(db *sql.DB) *CancelSubscriptionHandler {
 // @Success 200 {object} services.CancelSubscriptionServiceOutput
 // @Failure 400 {object} services.CancelSubscriptionServiceOutput
 // @Failure 401 {object} services.CancelSubscriptionServiceOutput
+// @Security Bearer
 // @Router /cancel-subscription/{id} [post]
 func (h *CancelSubscriptionHandler) Handle(c *gin.Context) {
 	userId, exists := c.Get("userId")

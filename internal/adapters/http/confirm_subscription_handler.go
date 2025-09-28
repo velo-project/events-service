@@ -31,6 +31,7 @@ func NewConfirmSubscriptionHandler(db *sql.DB, grpc *grpc.ClientConn) *ConfirmSu
 // @Success 200 {object} services.ConfirmSubscriptionOutput
 // @Failure 400 {object} services.ConfirmSubscriptionOutput
 // @Failure 401 {object} services.ConfirmSubscriptionOutput
+// @Security Bearer
 // @Router /confirm-subscription/{id} [post]
 func (h *ConfirmSubscriptionHandler) Handle(c *gin.Context) {
 	userId, exists := c.Get("userId")

@@ -85,6 +85,8 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/services.CancelSubscriptionServiceOutput'
+      security:
+      - Bearer: []
       summary: Cancel a subscription to an event
       tags:
       - events
@@ -128,6 +130,8 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/services.ConfirmSubscriptionOutput'
+      security:
+      - Bearer: []
       summary: Confirm a subscription to an event
       tags:
       - events
@@ -162,6 +166,8 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/services.GetConfirmationCodeOutput'
+      security:
+      - Bearer: []
       summary: Get a confirmation code for an event
       tags:
       - events
@@ -209,6 +215,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/services.CreateEventServiceOutput'
+      security:
+      - Bearer: []
       summary: Create an event
       tags:
       - events
@@ -243,7 +251,14 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/services.SubscribeEventServiceOutput'
+      security:
+      - Bearer: []
       summary: Subscribe to an event
       tags:
       - events
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
