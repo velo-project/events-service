@@ -41,9 +41,6 @@ definitions:
       status_code:
         type: integer
     type: object
-  structs.H:
-    additionalProperties: true
-    type: object
 host: localhost:8080
 info:
   contact:
@@ -68,6 +65,11 @@ paths:
         name: id
         required: true
         type: integer
+      - description: User ID
+        in: header
+        name: userId
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -78,11 +80,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/structs.H'
+            $ref: '#/definitions/services.CancelSubscriptionServiceOutput'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/structs.H'
+            $ref: '#/definitions/services.CancelSubscriptionServiceOutput'
       summary: Cancel a subscription to an event
       tags:
       - events
@@ -95,6 +97,11 @@ paths:
       - description: Event ID
         in: path
         name: id
+        required: true
+        type: integer
+      - description: User ID
+        in: header
+        name: userId
         required: true
         type: integer
       - description: Confirmation code
@@ -116,11 +123,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/structs.H'
+            $ref: '#/definitions/services.ConfirmSubscriptionOutput'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/structs.H'
+            $ref: '#/definitions/services.ConfirmSubscriptionOutput'
       summary: Confirm a subscription to an event
       tags:
       - events
@@ -135,6 +142,11 @@ paths:
         name: id
         required: true
         type: integer
+      - description: User ID
+        in: header
+        name: userId
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -145,11 +157,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/structs.H'
+            $ref: '#/definitions/services.GetConfirmationCodeOutput'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/structs.H'
+            $ref: '#/definitions/services.GetConfirmationCodeOutput'
       summary: Get a confirmation code for an event
       tags:
       - events
@@ -172,7 +184,6 @@ paths:
       - description: Event description
         in: formData
         name: description
-        required: true
         type: string
       - description: Event date
         in: formData
@@ -182,18 +193,7 @@ paths:
       - description: Event location
         in: formData
         name: location
-        required: true
         type: string
-      - description: Event price
-        in: formData
-        name: price
-        required: true
-        type: number
-      - description: Event max attendees
-        in: formData
-        name: max_attendees
-        required: true
-        type: integer
       produces:
       - application/json
       responses:
@@ -204,11 +204,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/structs.H'
+            $ref: '#/definitions/services.CreateEventServiceOutput'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/structs.H'
+            $ref: '#/definitions/services.CreateEventServiceOutput'
       summary: Create an event
       tags:
       - events
@@ -223,6 +223,11 @@ paths:
         name: id
         required: true
         type: integer
+      - description: User ID
+        in: header
+        name: userId
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -233,11 +238,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/structs.H'
+            $ref: '#/definitions/services.SubscribeEventServiceOutput'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/structs.H'
+            $ref: '#/definitions/services.SubscribeEventServiceOutput'
       summary: Subscribe to an event
       tags:
       - events

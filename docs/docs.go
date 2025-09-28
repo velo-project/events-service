@@ -43,6 +43,13 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -55,13 +62,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/structs.H"
+                            "$ref": "#/definitions/services.CancelSubscriptionServiceOutput"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/structs.H"
+                            "$ref": "#/definitions/services.CancelSubscriptionServiceOutput"
                         }
                     }
                 }
@@ -89,6 +96,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "Confirmation code",
                         "name": "code",
                         "in": "body",
@@ -113,13 +127,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/structs.H"
+                            "$ref": "#/definitions/services.ConfirmSubscriptionOutput"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/structs.H"
+                            "$ref": "#/definitions/services.ConfirmSubscriptionOutput"
                         }
                     }
                 }
@@ -145,6 +159,13 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -157,13 +178,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/structs.H"
+                            "$ref": "#/definitions/services.GetConfirmationCodeOutput"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/structs.H"
+                            "$ref": "#/definitions/services.GetConfirmationCodeOutput"
                         }
                     }
                 }
@@ -201,8 +222,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Event description",
                         "name": "description",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     },
                     {
                         "type": "string",
@@ -215,22 +235,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Event location",
                         "name": "location",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "number",
-                        "description": "Event price",
-                        "name": "price",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Event max attendees",
-                        "name": "max_attendees",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -243,13 +248,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/structs.H"
+                            "$ref": "#/definitions/services.CreateEventServiceOutput"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/structs.H"
+                            "$ref": "#/definitions/services.CreateEventServiceOutput"
                         }
                     }
                 }
@@ -275,6 +280,13 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -287,13 +299,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/structs.H"
+                            "$ref": "#/definitions/services.SubscribeEventServiceOutput"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/structs.H"
+                            "$ref": "#/definitions/services.SubscribeEventServiceOutput"
                         }
                     }
                 }
@@ -364,10 +376,6 @@ const docTemplate = `{
                     "type": "integer"
                 }
             }
-        },
-        "structs.H": {
-            "type": "object",
-            "additionalProperties": true
         }
     }
 }`
