@@ -33,14 +33,12 @@ func NewCreateEventHandler(db *sql.DB, md *genai.EmbeddingModel, bucket *storage
 // @Produce json
 // @Param image formData file true "Event image"
 // @Param name formData string true "Event name"
-// @Param description formData string true "Event description"
+// @Param description formData string false "Event description"
 // @Param date formData string true "Event date"
-// @Param location formData string true "Event location"
-// @Param price formData number true "Event price"
-// @Param max_attendees formData integer true "Event max attendees"
+// @Param location formData string false "Event location"
 // @Success 201 {object} services.CreateEventServiceOutput
-// @Failure 400 {object} gin.H
-// @Failure 500 {object} gin.H
+// @Failure 400 {object} services.CreateEventServiceOutput
+// @Failure 500 {object} services.CreateEventServiceOutput
 // @Router /create [post]
 func (h *CreateEventHandler) Handle(c *gin.Context) {
 	file, err := c.FormFile("image")

@@ -26,9 +26,10 @@ func NewSubscribeEventHandler(db *sql.DB, grpc *grpc.ClientConn) *SubscribeEvent
 // @Accept json
 // @Produce json
 // @Param id path int true "Event ID"
+// @Param userId header int true "User ID"
 // @Success 200 {object} services.SubscribeEventServiceOutput
-// @Failure 400 {object} gin.H
-// @Failure 401 {object} gin.H
+// @Failure 400 {object} services.SubscribeEventServiceOutput
+// @Failure 401 {object} services.SubscribeEventServiceOutput
 // @Router /subscribe/{id} [post]
 func (h *SubscribeEventHandler) Handle(c *gin.Context) {
 	userId, exists := c.Get("userId")
