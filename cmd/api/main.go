@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
@@ -9,9 +10,11 @@ import (
 	"github.com/getsentry/sentry-go"
 	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
+	"github.com/google/generative-ai-go/genai"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"gitlab.com/velo-company/services/events-service/internal/adapters/http"
+	"google.golang.org/api/option"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -47,6 +50,27 @@ func main() {
 		fmt.Printf("Sentry initialization failed: %v\n", err)
 	}
 
+	geminiApiKey := os.Getenv("GEMINI_API_KEY")
+	geminiModel := os.Getenv("GEMINI_MODEL")
+
+	if geminiModel == "" {
+		panic("GEMINI_MODEL environment variable not set")
+	}
+	if geminiApiKey == "" {
+		panic("GEMINI_API_KEY environment variable not set")
+	}
+
+	ctx := context.Background()
+	geminiClient, err := genai.NewClient(ctx, option.WithAPIKey(geminiApiKey))
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer geminiClient.Close()
+
+	embeddingsModel := geminiClient.EmbeddingModel(geminiModel)
+
 	r := gin.Default()
 	r.Use(sentrygin.New(sentrygin.Options{}))
 
@@ -54,7 +78,7 @@ func main() {
 	cancelSubscriptionHandler := http.NewCancelSubscriptionHandler(db)
 	confirmSubscriptionHandler := http.NewConfirmSubscriptionHandler(db, grpcConn)
 	getConfirmationCodeHandler := http.NewGetConfirmationCodeHandler(db, grpcConn)
-	createEventHandler := http.NewCreateEventHandler(db)
+	createEventHandler := http.NewCreateEventHandler(db, embeddingsModel)
 
 	pr := r.Group("/api/events/v1")
 	pr.Use(http.AuthMiddleware([]string{"USER", "ADMIN"}))

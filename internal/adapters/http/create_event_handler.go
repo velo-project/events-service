@@ -4,16 +4,22 @@ import (
 	"database/sql"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/generative-ai-go/genai"
+	"gitlab.com/velo-company/services/events-service/internal/adapters/ai"
 	"gitlab.com/velo-company/services/events-service/internal/adapters/database"
 	"gitlab.com/velo-company/services/events-service/internal/core/services"
 )
 
 type CreateEventHandler struct {
-	db *sql.DB
+	db    *sql.DB
+	model *genai.EmbeddingModel
 }
 
-func NewCreateEventHandler(db *sql.DB) *CreateEventHandler {
-	return &CreateEventHandler{db: db}
+func NewCreateEventHandler(db *sql.DB, md *genai.EmbeddingModel) *CreateEventHandler {
+	return &CreateEventHandler{
+		db:    db,
+		model: md,
+	}
 }
 
 func (h *CreateEventHandler) Handle(c *gin.Context) {
@@ -24,7 +30,8 @@ func (h *CreateEventHandler) Handle(c *gin.Context) {
 	}
 
 	createEventPort := database.NewCreateEventAdapter(h.db)
-	service := services.NewCreateEventService(createEventPort)
+	embeddingsGenerator := ai.NewEmbeddingsGenerator(h.model)
+	service := services.NewCreateEventService(createEventPort, embeddingsGenerator)
 
 	output := service.Execute(&input)
 

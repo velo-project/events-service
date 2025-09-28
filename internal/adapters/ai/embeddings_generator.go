@@ -12,7 +12,7 @@ type embeddingsGenerator struct {
 	Model *genai.EmbeddingModel
 }
 
-func NewEmbeddingsGeneratorOutput(model *genai.EmbeddingModel) ports.EmbeddingsGenerator {
+func NewEmbeddingsGenerator(model *genai.EmbeddingModel) ports.EmbeddingsGenerator {
 	return &embeddingsGenerator{
 		Model: model,
 	}
