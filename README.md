@@ -125,6 +125,16 @@ To generate the `.pb.go` file from the `.proto` file, you can use the following 
 protoc --go_out=. --go-grpc_out=. proto/user.proto
 ```
 
+### Swagger Documentation
+
+To generate the swagger documentation, you can use the following command:
+
+```sh
+swag init -g cmd/api/main.go -o docs/
+```
+
+This will generate the `docs/` folder with the swagger documentation.
+
 ## Dependencies
 
 The project uses the following primary dependencies:
