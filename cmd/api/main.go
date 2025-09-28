@@ -14,13 +14,27 @@ import (
 	"github.com/google/generative-ai-go/genai"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	swaggerFiles "github.com/swaggo/files"
+	swagger "github.com/swaggo/gin-swagger"
+	"gitlab.com/velo-company/services/events-service/docs"
 	"gitlab.com/velo-company/services/events-service/internal/adapters/http"
 	"google.golang.org/api/option"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+// @title Events Service API
+// @version 1.0
+// @description This is the API for the Events Service
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.email soberkoder@swagger.io
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:8080
+// @BasePath /api/events/v1
 func main() {
+	docs.SwaggerInfo.BasePath = "/api/events/v1"
 	if err := godotenv.Load(); err != nil {
 		log.Print("WARN: No .env file, using default system variables")
 	}
@@ -101,6 +115,8 @@ func main() {
 		pr.GET("/confirmation-code/:id", getConfirmationCodeHandler.Handle)
 		pr.POST("/create", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), createEventHandler.Handle)
 	}
+
+	r.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler))
 
 	r.Run()
 }

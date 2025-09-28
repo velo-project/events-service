@@ -20,6 +20,17 @@ func NewConfirmSubscriptionHandler(db *sql.DB, grpc *grpc.ClientConn) *ConfirmSu
 	return &ConfirmSubscriptionHandler{db: db, grpc: grpc}
 }
 
+// @Summary Confirm a subscription to an event
+// @Description Confirm a subscription to an event
+// @Tags events
+// @Accept json
+// @Produce json
+// @Param id path int true "Event ID"
+// @Param code body object{code=string} true "Confirmation code"
+// @Success 200 {object} services.ConfirmSubscriptionOutput
+// @Failure 400 {object} gin.H
+// @Failure 401 {object} gin.H
+// @Router /confirm-subscription/{id} [post]
 func (h *ConfirmSubscriptionHandler) Handle(c *gin.Context) {
 	userId, exists := c.Get("userId")
 	if !exists {

@@ -21,6 +21,16 @@ func NewCancelSubscriptionHandler(db *sql.DB) *CancelSubscriptionHandler {
 	return &CancelSubscriptionHandler{db: db}
 }
 
+// @Summary Cancel a subscription to an event
+// @Description Cancel a subscription to an event
+// @Tags events
+// @Accept json
+// @Produce json
+// @Param id path int true "Event ID"
+// @Success 200 {object} services.CancelSubscriptionServiceOutput
+// @Failure 400 {object} gin.H
+// @Failure 401 {object} gin.H
+// @Router /cancel-subscription/{id} [post]
 func (h *CancelSubscriptionHandler) Handle(c *gin.Context) {
 	userId, exists := c.Get("userId")
 	if !exists {
