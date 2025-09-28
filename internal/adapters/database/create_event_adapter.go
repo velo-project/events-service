@@ -19,7 +19,7 @@ func NewCreateEventAdapter(DB *sql.DB) ports.CreateEventPort {
 }
 
 const (
-	createEventQuery = `INSERT INTO tb_events (name_event, description_event, location_event, date_event, embeddings_event) VALUES ($1, $2, $3, $4, $5) RETURNING id_event`
+	createEventQuery = `INSERT INTO tb_events (name_event, description_event, location_event, date_event, embeddings_event, image_url_event) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_event`
 )
 
 func (s createEventAdapter) Execute(event *entities.Event) (*int, error) {
@@ -31,7 +31,7 @@ func (s createEventAdapter) Execute(event *entities.Event) (*int, error) {
 	defer tx.Rollback()
 
 	var eventId int
-	err = tx.QueryRow(createEventQuery, event.Name, event.Description, event.Location, event.Date, event.Embeddings).Scan(&eventId)
+	err = tx.QueryRow(createEventQuery, event.Name, event.Description, event.Location, event.Date, event.Embeddings, event.ImageURL).Scan(&eventId)
 	if err != nil {
 		return nil, err
 	}
