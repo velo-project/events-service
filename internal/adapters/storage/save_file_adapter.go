@@ -1,12 +1,16 @@
 package storage
 
 import (
+	"bytes"
 	"fmt"
+	"image"
+	"image/jpeg"
 	"io"
 	"time"
 
 	"cloud.google.com/go/storage"
 	"github.com/google/uuid"
+	"github.com/nfnt/resize"
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
 	"golang.org/x/net/context"
 )
@@ -21,9 +25,14 @@ func NewSaveFileAdapter(bucket *storage.BucketHandle) ports.SaveFilePort {
 	}
 }
 
-func (s saveFileAdapter) Execute(file io.Reader, fileExtension string) (*string, error) {
+func (s saveFileAdapter) Execute(file io.Reader) (*string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+
+	compressedImage, err := compressImage(file)
+	if err != nil {
+		return nil, err
+	}
 
 	fileNameBrute, err := uuid.NewV7()
 	if err != nil {
@@ -39,13 +48,13 @@ func (s saveFileAdapter) Execute(file io.Reader, fileExtension string) (*string,
 		int(month),
 		day,
 		fileName,
-		fileExtension,
+		".jpeg",
 	)
 
 	object := s.bucket.Object(completeObjectName)
 	wc := object.NewWriter(ctx)
 
-	if _, err := io.Copy(wc, file); err != nil {
+	if _, err := io.Copy(wc, compressedImage); err != nil {
 		wc.Close()
 		return nil, fmt.Errorf("falha ao copiar o arquivo para o GCS: %w", err)
 	}
@@ -55,4 +64,21 @@ func (s saveFileAdapter) Execute(file io.Reader, fileExtension string) (*string,
 	}
 
 	return &completeObjectName, nil
+}
+
+func compressImage(file io.Reader) (io.Reader, error) {
+	img, _, err := image.Decode(file)
+	if err != nil {
+		return nil, err
+	}
+
+	resizedImg := resize.Resize(1000, 0, img, resize.Lanczos3)
+
+	buf := new(bytes.Buffer)
+	err = jpeg.Encode(buf, resizedImg, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
 }
