@@ -1,0 +1,4 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+
+ALTER TABLE tb_user_events
+ADD COLUMN image_url_event VARCHAR(255);
