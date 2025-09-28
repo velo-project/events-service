@@ -52,10 +52,10 @@ func main() {
 	}
 
 	geminiApiKey := os.Getenv("GEMINI_API_KEY")
-	geminiModel := os.Getenv("GEMINI_MODEL")
+	geminiModel := os.Getenv("GEMINI_EMBEDDINGS_MODEL")
 
 	if geminiModel == "" {
-		panic("GEMINI_MODEL environment variable not set")
+		panic("GEMINI_EMBEDDINGS_MODEL environment variable not set")
 	}
 	if geminiApiKey == "" {
 		panic("GEMINI_API_KEY environment variable not set")
