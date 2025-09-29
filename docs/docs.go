@@ -79,6 +79,61 @@ const docTemplate = `{
                 }
             }
         },
+        "/cancel/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Cancel an event",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Cancel an event",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Event ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/services.CancelEventServiceOutput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/services.CancelEventServiceOutput"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/services.CancelEventServiceOutput"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/services.CancelEventServiceOutput"
+                        }
+                    }
+                }
+            }
+        },
         "/confirm-subscription/{id}": {
             "post": {
                 "security": [
@@ -338,6 +393,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "services.CancelEventServiceOutput": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                }
+            }
+        },
         "services.CancelSubscriptionServiceOutput": {
             "type": "object",
             "properties": {

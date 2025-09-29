@@ -1,5 +1,12 @@
 basePath: /api/events/v1
 definitions:
+  services.CancelEventServiceOutput:
+    properties:
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
   services.CancelSubscriptionServiceOutput:
     properties:
       message:
@@ -88,6 +95,41 @@ paths:
       security:
       - Bearer: []
       summary: Cancel a subscription to an event
+      tags:
+      - events
+  /cancel/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Cancel an event
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.CancelEventServiceOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/services.CancelEventServiceOutput'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/services.CancelEventServiceOutput'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/services.CancelEventServiceOutput'
+      security:
+      - Bearer: []
+      summary: Cancel an event
       tags:
       - events
   /confirm-subscription/{id}:
