@@ -108,6 +108,7 @@ func main() {
 	confirmSubscriptionHandler := http.NewConfirmSubscriptionHandler(db, grpcConn)
 	getConfirmationCodeHandler := http.NewGetConfirmationCodeHandler(db, grpcConn)
 	createEventHandler := http.NewCreateEventHandler(db, embeddingsModel, bucket)
+	cancelEventHandler := http.NewCancelEventHandler(db)
 
 	pr := r.Group("/api/events/v1")
 	pr.Use(http.AuthMiddleware([]string{"USER", "ADMIN"}))
@@ -117,6 +118,7 @@ func main() {
 		pr.POST("/confirm-subscription/:id", confirmSubscriptionHandler.Handle)
 		pr.GET("/confirmation-code/:id", getConfirmationCodeHandler.Handle)
 		pr.POST("/create", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), createEventHandler.Handle)
+		pr.PATCH("/cancel/:id", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), cancelEventHandler.Handle)
 	}
 
 	r.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler))
