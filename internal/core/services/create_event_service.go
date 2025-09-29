@@ -17,6 +17,7 @@ type createEventService struct {
 	CreateEventPort     ports.CreateEventPort
 	EmbeddingsGenerator ports.EmbeddingsGenerator
 	SaveFilePort        ports.SaveFilePort
+	UserExistsByIdPort  ports.UserExistsByIdPort
 }
 
 type CreateEventServiceInput struct {
@@ -26,6 +27,7 @@ type CreateEventServiceInput struct {
 	Date           time.Time `form:"date"`
 	Image          io.Reader `form:"-"`
 	ImageExtension string    `form:"-"`
+	UserId         int       `form:"-"`
 }
 
 type CreateEventServiceOutput struct {
@@ -34,15 +36,29 @@ type CreateEventServiceOutput struct {
 	StatusCode int    `json:"status_code"`
 }
 
-func NewCreateEventService(ce ports.CreateEventPort, eg ports.EmbeddingsGenerator, sf ports.SaveFilePort) CreateEventService {
+func NewCreateEventService(ce ports.CreateEventPort, eg ports.EmbeddingsGenerator, sf ports.SaveFilePort, ue ports.UserExistsByIdPort) CreateEventService {
 	return &createEventService{
 		CreateEventPort:     ce,
 		EmbeddingsGenerator: eg,
 		SaveFilePort:        sf,
+		UserExistsByIdPort:  ue,
 	}
 }
 
 func (s createEventService) Execute(input *CreateEventServiceInput) *CreateEventServiceOutput {
+	exists, err := s.UserExistsByIdPort.Execute(input.UserId)
+	if err != nil {
+		return &CreateEventServiceOutput{
+			Message:    "Estamos enfrentando problemas no momento. Tente novamento mais tarde",
+			StatusCode: 502,
+		}
+	}
+	if !exists {
+		return &CreateEventServiceOutput{
+			Message:    "Este usuário não existe",
+			StatusCode: 404,
+		}
+	}
 	// TODO: Add date parsing and validation
 	textToEmbeddings := fmt.Sprintf("%s %s", input.Name, deref(input.Description))
 	embeddings, err := s.EmbeddingsGenerator.Generate(ports.EmbeddingsGeneratorInput{
