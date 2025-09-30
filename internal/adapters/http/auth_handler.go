@@ -44,13 +44,13 @@ func AuthMiddleware(roles []string) gin.HandlerFunc {
 
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Cabeçalho de autorização é obrigatório", "status_code": http.StatusUnauthorized})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
 			return
 		}
 
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 		if tokenString == authHeader {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Formato de token Bearer é obrigatório", "status_code": http.StatusUnauthorized})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Bearer token format is required"})
 			return
 		}
 
@@ -62,7 +62,7 @@ func AuthMiddleware(roles []string) gin.HandlerFunc {
 		})
 
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Token inválido: " + err.Error(), "status_code": http.StatusUnauthorized})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token: " + err.Error()})
 			return
 		}
 
@@ -77,11 +77,11 @@ func AuthMiddleware(roles []string) gin.HandlerFunc {
 						}
 					}
 					if !hasRole {
-						c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"message": "Proibido", "status_code": http.StatusForbidden})
+						c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
 						return
 					}
 				} else {
-					c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"message": "Proibido", "status_code": http.StatusForbidden})
+					c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Forbidden"})
 					return
 				}
 			}
@@ -100,7 +100,7 @@ func AuthMiddleware(roles []string) gin.HandlerFunc {
 				num, err := strconv.Atoi(sub)
 
 				if err != nil {
-					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Token inválido: " + err.Error(), "status_code": http.StatusUnauthorized})
+					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token: " + err.Error()})
 					return
 				}
 
@@ -115,10 +115,10 @@ func AuthMiddleware(roles []string) gin.HandlerFunc {
 				return
 			}
 
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Claim 'email' não encontrada ou não é uma string", "status_code": http.StatusUnauthorized})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "'email' claim not found or is not a string"})
 			return
 		}
 
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Claims de token inválidas", "status_code": http.StatusUnauthorized})
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 	}
 }

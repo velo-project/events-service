@@ -33,7 +33,7 @@ func (h *CancelEventHandler) Handle(c *gin.Context) {
 	eventIdStr := c.Param("id")
 	eventId, err := strconv.Atoi(eventIdStr)
 	if err != nil {
-		c.JSON(400, gin.H{"message": "ID de evento inválido", "status_code": 400})
+		c.JSON(400, gin.H{"error": "Evento Invalido"})
 		return
 	}
 

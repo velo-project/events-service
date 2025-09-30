@@ -36,14 +36,14 @@ func NewConfirmSubscriptionHandler(db *sql.DB, grpc *grpc.ClientConn) *ConfirmSu
 func (h *ConfirmSubscriptionHandler) Handle(c *gin.Context) {
 	userId, exists := c.Get("userId")
 	if !exists {
-		c.JSON(401, gin.H{"message": "Usuário não autenticado", "status_code": 401})
+		c.JSON(401, gin.H{"error": "User not authenticated"})
 		return
 	}
 
 	eventIdStr := c.Param("id")
 	eventId, err := strconv.Atoi(eventIdStr)
 	if err != nil {
-		c.JSON(400, gin.H{"message": "ID de evento inválido", "status_code": 400})
+		c.JSON(400, gin.H{"error": "Invalid event ID"})
 		return
 	}
 
@@ -52,7 +52,7 @@ func (h *ConfirmSubscriptionHandler) Handle(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(400, gin.H{"message": "Corpo da requisição inválido", "status_code": 400})
+		c.JSON(400, gin.H{"error": "Invalid request body"})
 		return
 	}
 
