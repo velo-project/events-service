@@ -1,6 +1,7 @@
 package services
 
 import (
+	goErrors "errors"
 	"gitlab.com/velo-company/services/events-service/internal/core/errors"
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
 )
@@ -10,12 +11,12 @@ type CancelEventService interface {
 }
 
 type cancelEventService struct {
-	repo               ports.CancelEventPort
+	cancelEventPort    ports.CancelEventPort
 	userExistsByIdPort ports.UserExistsByIdPort
 }
 
-func NewCancelEventService(repo ports.CancelEventPort, userExistsByIdPort ports.UserExistsByIdPort) CancelEventService {
-	return &cancelEventService{repo: repo, userExistsByIdPort: userExistsByIdPort}
+func NewCancelEventService(cancelEventPort ports.CancelEventPort, userExistsByIdPort ports.UserExistsByIdPort) CancelEventService {
+	return &cancelEventService{cancelEventPort: cancelEventPort, userExistsByIdPort: userExistsByIdPort}
 }
 
 type CancelEventServiceInput struct {
@@ -43,23 +44,15 @@ func (s cancelEventService) Execute(input *CancelEventServiceInput) *CancelEvent
 		}
 	}
 
-	event, err := s.repo.GetEventById(input.EventId)
+	err = s.cancelEventPort.Execute(input.EventId)
 	if err != nil {
-		return &CancelEventServiceOutput{
-			Message:    "Estamos enfrentando problemas no momento. Tente novamento mais tarde",
-			StatusCode: 500,
+		if goErrors.Is(err, errors.ErrEventNotFound) {
+			return &CancelEventServiceOutput{
+				Message:    errors.ErrEventNotFound.Error(),
+				StatusCode: 404,
+			}
 		}
-	}
 
-	if event == nil {
-		return &CancelEventServiceOutput{
-			Message:    errors.ErrEventNotFound.Error(),
-			StatusCode: 404,
-		}
-	}
-
-	err = s.repo.CancelEvent(input.EventId)
-	if err != nil {
 		return &CancelEventServiceOutput{
 			Message:    "Não foi possível cancelar o evento",
 			StatusCode: 500,

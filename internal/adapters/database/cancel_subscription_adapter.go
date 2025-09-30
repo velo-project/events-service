@@ -21,9 +21,9 @@ func NewCancelSubscriptionAdapter(db *sql.DB) ports.CancelSubscriptionPort {
 }
 
 const (
-	getEventDateQuery = `SELECT date_event FROM tb_events WHERE id_event = $1`
-	searchEventQuery  = `SELECT 1 FROM tb_user_events WHERE fk_id_event = $1 AND fk_id_user = $2`
-	cancelEventQuery  = `UPDATE tb_user_events SET participation_status_event = $1 WHERE fk_id_event = $2 AND fk_id_user = $3`
+	getEventDateQuery       = `SELECT date_event FROM tb_events WHERE id_event = $1`
+	searchEventQuery        = `SELECT 1 FROM tb_user_events WHERE fk_id_event = $1 AND fk_id_user = $2`
+	cancelUserParticipation = `UPDATE tb_user_events SET participation_status_event = $1 WHERE fk_id_event = $2 AND fk_id_user = $3`
 )
 
 func (c cancelSubscriptionAdapter) Execute(eventId int, userId int) error {
@@ -56,7 +56,7 @@ func (c cancelSubscriptionAdapter) Execute(eventId int, userId int) error {
 
 	defer tx.Rollback()
 
-	_, err = tx.Exec(cancelEventQuery, entities.Cancelled, eventId, userId)
+	_, err = tx.Exec(cancelUserParticipation, entities.Cancelled, eventId, userId)
 
 	if err != nil {
 		return err

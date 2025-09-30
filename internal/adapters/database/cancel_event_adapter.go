@@ -17,18 +17,13 @@ func NewCancelEventAdapter(db *sql.DB) ports.CancelEventPort {
 	return &cancelEventAdapter{Db: db}
 }
 
+const (
+	cancelEventQuery     = `UPDATE tb_events SET canceled_event = TRUE WHERE id_event = $1`
+	searchEventByIdQuery = `SELECT id_event, name_event, description_event, location_event, photo_event, date_event, active_event, canceled_event, deleted_event FROM tb_events WHERE id_event = $1`
+)
+
 func (a *cancelEventAdapter) CancelEvent(eventId int) error {
-	query := "UPDATE tb_events SET canceled_event = TRUE WHERE id_event = $1"
-
-	_, err := a.Db.Exec(query, eventId)
-
-	return err
-}
-
-func (a *cancelEventAdapter) GetEventById(eventId int) (*entities.Event, error) {
-	query := "SELECT id_event, name_event, description_event, location_event, photo_event, date_event, active_event, canceled_event, deleted_event FROM tb_events WHERE id_event = $1"
-
-	row := a.Db.QueryRow(query, eventId)
+	row := a.Db.QueryRow(searchEventByIdQuery, eventId)
 
 	var event entities.Event
 
@@ -36,10 +31,12 @@ func (a *cancelEventAdapter) GetEventById(eventId int) (*entities.Event, error) 
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, domainErrors.ErrEventNotFound
+			return domainErrors.ErrEventNotFound
 		}
-		return nil, err
+		return err
 	}
 
-	return &event, nil
+	_, err = a.Db.Exec(cancelEventQuery, eventId)
+
+	return err
 }
