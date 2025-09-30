@@ -22,7 +22,7 @@ const (
 	searchEventByIdQuery = `SELECT id_event, name_event, description_event, location_event, photo_event, date_event, active_event, canceled_event, deleted_event FROM tb_events WHERE id_event = $1`
 )
 
-func (a *cancelEventAdapter) CancelEvent(eventId int) error {
+func (a *cancelEventAdapter) Execute(eventId int) error {
 	row := a.Db.QueryRow(searchEventByIdQuery, eventId)
 
 	var event entities.Event
