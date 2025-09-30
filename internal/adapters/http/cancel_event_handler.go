@@ -6,15 +6,21 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"gitlab.com/velo-company/services/events-service/internal/adapters/database"
+	grpcadapter "gitlab.com/velo-company/services/events-service/internal/adapters/grpc"
 	"gitlab.com/velo-company/services/events-service/internal/core/services"
+	"google.golang.org/grpc"
 )
 
 type CancelEventHandler struct {
-	db *sql.DB
+	db   *sql.DB
+	grpc *grpc.ClientConn
 }
 
-func NewCancelEventHandler(db *sql.DB) *CancelEventHandler {
-	return &CancelEventHandler{db: db}
+func NewCancelEventHandler(db *sql.DB, grpc *grpc.ClientConn) *CancelEventHandler {
+	return &CancelEventHandler{
+		db:   db,
+		grpc: grpc,
+	}
 }
 
 // @Summary Cancel an event
@@ -37,11 +43,21 @@ func (h *CancelEventHandler) Handle(c *gin.Context) {
 		return
 	}
 
+	anonymousUserId, exists := c.Get("userId")
+	if !exists {
+		c.JSON(401, gin.H{"message": "Usuário não autenticado", "status_code": 401})
+		return
+	}
+
+	userId := anonymousUserId.(int)
+
 	cancelEventAdapter := database.NewCancelEventAdapter(h.db)
-	service := services.NewCancelEventService(cancelEventAdapter)
+	userExistsByIdPort := grpcadapter.NewUserExistsByIdAdapter(h.grpc)
+	service := services.NewCancelEventService(cancelEventAdapter, userExistsByIdPort)
 
 	input := services.CancelEventServiceInput{
 		EventId: eventId,
+		UserId:  userId,
 	}
 
 	output := service.Execute(&input)
