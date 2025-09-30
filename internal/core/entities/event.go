@@ -14,4 +14,5 @@ type Event struct {
 	Active      bool      `json:"active"`
 	Canceled    bool      `json:"canceled"`
 	Deleted     bool      `json:"deleted"`
+	Suspended   bool      `json:"suspended"`
 }
