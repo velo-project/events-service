@@ -8,21 +8,25 @@ import (
 	"github.com/google/generative-ai-go/genai"
 	"gitlab.com/velo-company/services/events-service/internal/adapters/ai"
 	"gitlab.com/velo-company/services/events-service/internal/adapters/database"
+	grpcadapter "gitlab.com/velo-company/services/events-service/internal/adapters/grpc"
 	storageAdapter "gitlab.com/velo-company/services/events-service/internal/adapters/storage"
 	"gitlab.com/velo-company/services/events-service/internal/core/services"
+	"google.golang.org/grpc"
 )
 
 type CreateEventHandler struct {
 	db     *sql.DB
 	model  *genai.EmbeddingModel
 	bucket *storage.BucketHandle
+	grpc   *grpc.ClientConn
 }
 
-func NewCreateEventHandler(db *sql.DB, md *genai.EmbeddingModel, bucket *storage.BucketHandle) *CreateEventHandler {
+func NewCreateEventHandler(db *sql.DB, md *genai.EmbeddingModel, bucket *storage.BucketHandle, grpcConn *grpc.ClientConn) *CreateEventHandler {
 	return &CreateEventHandler{
 		db:     db,
 		model:  md,
 		bucket: bucket,
+		grpc:   grpcConn,
 	}
 }
 
@@ -55,6 +59,14 @@ func (h *CreateEventHandler) Handle(c *gin.Context) {
 	}
 	defer image.Close()
 
+	anonymousUserId, exists := c.Get("userId")
+	if !exists {
+		c.JSON(401, gin.H{"message": "Usuário não autenticado", "status_code": 401})
+		return
+	}
+
+	userId := anonymousUserId.(int)
+
 	var input services.CreateEventServiceInput
 	if err := c.ShouldBind(&input); err != nil {
 		c.JSON(400, gin.H{"message": "Entrada inválida", "status_code": 400})
@@ -62,11 +74,13 @@ func (h *CreateEventHandler) Handle(c *gin.Context) {
 	}
 	input.Image = image
 	input.ImageExtension = file.Filename[len(file.Filename)-4:]
+	input.UserId = userId
 
 	createEventPort := database.NewCreateEventAdapter(h.db)
 	embeddingsGenerator := ai.NewEmbeddingsGenerator(h.model)
 	saveFileAdapter := storageAdapter.NewSaveFileAdapter(h.bucket)
-	service := services.NewCreateEventService(createEventPort, embeddingsGenerator, saveFileAdapter)
+	userExistsByIdPort := grpcadapter.NewUserExistsByIdAdapter(h.grpc)
+	service := services.NewCreateEventService(createEventPort, embeddingsGenerator, saveFileAdapter, userExistsByIdPort)
 
 	output := service.Execute(&input)
 
