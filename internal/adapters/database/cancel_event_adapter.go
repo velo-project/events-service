@@ -18,7 +18,7 @@ func NewCancelEventAdapter(db *sql.DB) ports.CancelEventPort {
 }
 
 const (
-	cancelEventQuery     = `UPDATE tb_events SET canceled_event = TRUE WHERE id_event = $1`
+	cancelEventQuery     = `UPDATE tb_events SET canceled_event = TRUE, active_event = FALSE WHERE id_event = $1`
 	searchEventByIdQuery = `SELECT id_event, name_event, description_event, location_event, photo_event, date_event, active_event, canceled_event, deleted_event FROM tb_events WHERE id_event = $1`
 )
 
