@@ -44,20 +44,20 @@ func NewCreateEventHandler(db *sql.DB, md *genai.EmbeddingModel, bucket *storage
 func (h *CreateEventHandler) Handle(c *gin.Context) {
 	file, err := c.FormFile("image")
 	if err != nil {
-		c.JSON(400, gin.H{"error": "Image not provided"})
+		c.JSON(400, gin.H{"message": "Imagem não fornecida", "status_code": 400})
 		return
 	}
 
 	image, err := file.Open()
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Failed to open image"})
+		c.JSON(500, gin.H{"message": "Falha ao abrir a imagem", "status_code": 500})
 		return
 	}
 	defer image.Close()
 
 	var input services.CreateEventServiceInput
 	if err := c.ShouldBind(&input); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid input"})
+		c.JSON(400, gin.H{"message": "Entrada inválida", "status_code": 400})
 		return
 	}
 	input.Image = image

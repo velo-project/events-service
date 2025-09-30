@@ -35,14 +35,14 @@ func NewGetConfirmationCodeHandler(db *sql.DB, grpc *grpc.ClientConn) *GetConfir
 func (h *GetConfirmationCodeHandler) Handle(c *gin.Context) {
 	userId, exists := c.Get("userId")
 	if !exists {
-		c.JSON(401, gin.H{"error": "User not authenticated"})
+		c.JSON(401, gin.H{"message": "Usuário não autenticado", "status_code": 401})
 		return
 	}
 
 	eventIdStr := c.Param("id")
 	eventId, err := strconv.Atoi(eventIdStr)
 	if err != nil {
-		c.JSON(400, gin.H{"error": "Invalid event ID"})
+		c.JSON(400, gin.H{"message": "ID de evento inválido", "status_code": 400})
 		return
 	}
 
