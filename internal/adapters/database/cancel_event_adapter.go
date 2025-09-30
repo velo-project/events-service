@@ -19,7 +19,7 @@ func NewCancelEventAdapter(db *sql.DB) ports.CancelEventPort {
 
 const (
 	cancelEventQuery     = `UPDATE tb_events SET canceled_event = TRUE, active_event = FALSE WHERE id_event = $1`
-	searchEventByIdQuery = `SELECT id_event, name_event, description_event, location_event, photo_event, date_event, active_event, canceled_event, deleted_event FROM tb_events WHERE id_event = $1`
+	searchEventByIdQuery = `SELECT id_event, name_event, description_event, location_event, photo_event, date_event, active_event, canceled_event, deleted_event, suspended_event FROM tb_events WHERE id_event = $1`
 )
 
 func (a *cancelEventAdapter) Execute(eventId int) error {
@@ -27,7 +27,7 @@ func (a *cancelEventAdapter) Execute(eventId int) error {
 
 	var event entities.Event
 
-	err := row.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.Photo, &event.Date, &event.Active, &event.Canceled, &event.Deleted)
+	err := row.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.Photo, &event.Date, &event.Active, &event.Canceled, &event.Deleted, &event.Suspended)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
