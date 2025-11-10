@@ -128,8 +128,8 @@ func main() {
 	r.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler))
 
 	port := os.Getenv("PORT")
-	if port == nil {
+	if port == "" {
 		port = "8080"
 	}
-	r.Run(port)
+	r.Run(":" + port)
 }
