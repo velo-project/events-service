@@ -10,6 +10,7 @@ import (
 	"cloud.google.com/go/storage"
 	"github.com/getsentry/sentry-go"
 	sentrygin "github.com/getsentry/sentry-go/gin"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/generative-ai-go/genai"
 	"github.com/joho/godotenv"
@@ -101,6 +102,7 @@ func main() {
 	bucket := gcsClient.Bucket(bucketName)
 
 	r := gin.Default()
+	r.Use(cors.Default())
 	r.Use(sentrygin.New(sentrygin.Options{}))
 
 	subscribeHandler := http.NewSubscribeEventHandler(db, grpcConn)
