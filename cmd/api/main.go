@@ -20,8 +20,8 @@ import (
 	"gitlab.com/velo-company/services/events-service/docs"
 	"gitlab.com/velo-company/services/events-service/internal/adapters/http"
 	"google.golang.org/api/option"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"gitlab.com/velo-company/services/events-service/internal/adapters/database"
+	"gitlab.com/velo-company/services/events-service/internal/core/services"
 )
 
 // @title Events Service API
@@ -105,6 +105,18 @@ func main() {
 	r.Use(cors.Default())
 	r.Use(sentrygin.New(sentrygin.Options{}))
 
+	// Adapters
+	getRecommendedEventsAdapter := database.NewGetRecommendedEventsAdapter(db)
+	getTrendingEventsAdapter := database.NewGetTrendingEventsAdapter(db)
+	getLastParticipatedEventsAdapter := database.NewGetLastParticipatedEventsAdapter(db)
+	getSubscribedEventsAdapter := database.NewGetSubscribedEventsAdapter(db)
+
+	// Services
+	getRecommendedEventsService := services.NewGetRecommendedEventsService(getRecommendedEventsAdapter)
+	getTrendingEventsService := services.NewGetTrendingEventsService(getTrendingEventsAdapter)
+	getLastParticipatedEventsService := services.NewGetLastParticipatedEventsService(getLastParticipatedEventsAdapter)
+	getSubscribedEventsService := services.NewGetSubscribedEventsService(getSubscribedEventsAdapter)
+
 	subscribeHandler := http.NewSubscribeEventHandler(db, grpcConn)
 	cancelSubscriptionHandler := http.NewCancelSubscriptionHandler(db)
 	confirmSubscriptionHandler := http.NewConfirmSubscriptionHandler(db, grpcConn)
@@ -113,6 +125,7 @@ func main() {
 	cancelEventHandler := http.NewCancelEventHandler(db, grpcConn)
 	suspendEventHandler := http.NewSuspendEventHandler(db, grpcConn)
 	activateEventHandler := http.NewActivateEventHandler(db, grpcConn)
+	getEventsHandler := http.NewGetEventsHandler(getRecommendedEventsService, getTrendingEventsService, getLastParticipatedEventsService, getSubscribedEventsService)
 
 	pr := r.Group("/api/events/v1")
 	pr.Use(http.AuthMiddleware([]string{"USER", "ADMIN"}))
@@ -125,6 +138,7 @@ func main() {
 		pr.PATCH("/cancel/:id", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), cancelEventHandler.Handle)
 		pr.PATCH("/suspend/:id", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), suspendEventHandler.Handle)
 		pr.PATCH("/activate/:id", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), activateEventHandler.Handle)
+		pr.GET("/events", getEventsHandler.Handle)
 	}
 
 	r.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler))
@@ -135,3 +149,4 @@ func main() {
 	}
 	r.Run(":" + port)
 }
+
