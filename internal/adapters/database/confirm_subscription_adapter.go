@@ -20,14 +20,14 @@ func NewConfirmSubscriptionAdapter(DB *sql.DB) ports.ConfirmSubscriptionPort {
 }
 
 const (
-	verifyUserCodeQuery       = `SELECT tb_user_events FROM tb_user_events WHERE user_id = $1 AND event_id = $2`
+	verifyUserCodeQuery       = `SELECT confirmation_code_event FROM tb_user_events WHERE fk_id_user = $1 AND fk_id_event = $2`
 	confirmParticipationQuery = `UPDATE tb_user_events SET participation_status_event = $1 WHERE fk_id_user = $2 AND fk_id_event = $3`
 )
 
 func (c confirmSubscriptionAdapter) Execute(code string, userId int, eventId int) error {
 	var confirmationCode string
 
-	err := c.DB.QueryRow(verifyUserCodeQuery, userId, eventId).Scan(&confirmationCode)
+	err := c.DB.QueryRow("SELECT confirmation_code_event FROM tb_user_events WHERE fk_id_user = $1 AND fk_id_event = $2", userId, eventId).Scan(&confirmationCode)
 	if err != nil {
 		return err
 	}
