@@ -1,5 +1,60 @@
 basePath: /api/events/v1
 definitions:
+  entities.Event:
+    properties:
+      active:
+        type: boolean
+      canceled:
+        type: boolean
+      date:
+        type: string
+      deleted:
+        type: boolean
+      description:
+        type: string
+      embeddings:
+        items:
+          type: number
+        type: array
+      id:
+        type: integer
+      image_url:
+        type: string
+      location:
+        type: string
+      name:
+        type: string
+      photo:
+        type: string
+      suspended:
+        type: boolean
+    type: object
+  http.ErrorResponse:
+    properties:
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  http.GetEventsResponse:
+    properties:
+      last_participated_events:
+        items:
+          $ref: '#/definitions/entities.Event'
+        type: array
+      recommended_events:
+        items:
+          $ref: '#/definitions/entities.Event'
+        type: array
+      subscribed_events:
+        items:
+          $ref: '#/definitions/entities.Event'
+        type: array
+      trending_events:
+        items:
+          $ref: '#/definitions/entities.Event'
+        type: array
+    type: object
   services.CancelEventServiceOutput:
     properties:
       message:
@@ -260,6 +315,28 @@ paths:
       security:
       - Bearer: []
       summary: Create an event
+      tags:
+      - events
+  /events:
+    get:
+      consumes:
+      - application/json
+      description: Get recommended, trending, last participated and subscribed events
+        for the authenticated user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.GetEventsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get events
       tags:
       - events
   /subscribe/{id}:

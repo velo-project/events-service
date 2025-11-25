@@ -335,6 +335,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/events": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get recommended, trending, last participated and subscribed events for the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Get events",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.GetEventsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/subscribe/{id}": {
             "post": {
                 "security": [
@@ -393,6 +427,90 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "entities.Event": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "canceled": {
+                    "type": "boolean"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "embeddings": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "photo": {
+                    "type": "string"
+                },
+                "suspended": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "http.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                }
+            }
+        },
+        "http.GetEventsResponse": {
+            "type": "object",
+            "properties": {
+                "last_participated_events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Event"
+                    }
+                },
+                "recommended_events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Event"
+                    }
+                },
+                "subscribed_events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Event"
+                    }
+                },
+                "trending_events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Event"
+                    }
+                }
+            }
+        },
         "services.CancelEventServiceOutput": {
             "type": "object",
             "properties": {
