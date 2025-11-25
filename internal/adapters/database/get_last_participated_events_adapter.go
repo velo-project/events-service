@@ -31,7 +31,7 @@ func (a *GetLastParticipatedEventsAdapter) GetLastParticipatedEvents(userID stri
 	var events []entities.Event
 	for rows.Next() {
 		var event entities.Event
-		if err := rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.Photo, &event.Date, &event.IsActive, &event.IsCanceled, &event.IsSuspended); err != nil {
+		if err := rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.Photo, &event.Date, &event.Active, &event.Canceled, &event.Suspended); err != nil {
 			return nil, err
 		}
 		events = append(events, event)

@@ -18,10 +18,12 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	swagger "github.com/swaggo/gin-swagger"
 	"gitlab.com/velo-company/services/events-service/docs"
-	"gitlab.com/velo-company/services/events-service/internal/adapters/http"
-	"google.golang.org/api/option"
 	"gitlab.com/velo-company/services/events-service/internal/adapters/database"
+	"gitlab.com/velo-company/services/events-service/internal/adapters/http"
 	"gitlab.com/velo-company/services/events-service/internal/core/services"
+	"google.golang.org/api/option"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // @title Events Service API
@@ -149,4 +151,3 @@ func main() {
 	}
 	r.Run(":" + port)
 }
-
