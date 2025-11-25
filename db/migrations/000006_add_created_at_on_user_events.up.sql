@@ -1,0 +1,1 @@
+ALTER TABLE tb_user_events ADD COLUMN created_at TIMESTAMP DEFAULT NOW();

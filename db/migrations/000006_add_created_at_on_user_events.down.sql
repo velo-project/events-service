@@ -1,0 +1,1 @@
+ALTER TABLE tb_user_events DROP COLUMN created_at;
