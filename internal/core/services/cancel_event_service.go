@@ -1,13 +1,13 @@
 package services
 
 import (
-	goErrors "errors"
-	"gitlab.com/velo-company/services/events-service/internal/core/errors"
+	"errors"
+
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
 )
 
 type CancelEventService interface {
-	Execute(input *CancelEventServiceInput) *CancelEventServiceOutput
+	Execute(input *CancelEventServiceInput) (*CancelEventServiceOutput, error)
 }
 
 type cancelEventService struct {
@@ -25,42 +25,24 @@ type CancelEventServiceInput struct {
 }
 
 type CancelEventServiceOutput struct {
-	Message    string `json:"message"`
-	StatusCode int    `json:"status_code"`
+	Message string `json:"message"`
 }
 
-func (s cancelEventService) Execute(input *CancelEventServiceInput) *CancelEventServiceOutput {
+func (s cancelEventService) Execute(input *CancelEventServiceInput) (*CancelEventServiceOutput, error) {
 	exists, err := s.userExistsByIdPort.Execute(input.UserId)
 	if err != nil {
-		return &CancelEventServiceOutput{
-			Message:    "Estamos enfrentando problemas no momento. Tente novamento mais tarde",
-			StatusCode: 502,
-		}
+		return nil, err
 	}
 	if !exists {
-		return &CancelEventServiceOutput{
-			Message:    "Este usuário não existe",
-			StatusCode: 404,
-		}
+		return nil, errors.New("Este usuário não existe")
 	}
 
 	err = s.cancelEventPort.Execute(input.EventId)
 	if err != nil {
-		if goErrors.Is(err, errors.ErrEventNotFound) {
-			return &CancelEventServiceOutput{
-				Message:    errors.ErrEventNotFound.Error(),
-				StatusCode: 404,
-			}
-		}
-
-		return &CancelEventServiceOutput{
-			Message:    "Não foi possível cancelar o evento",
-			StatusCode: 500,
-		}
+		return nil, err
 	}
 
 	return &CancelEventServiceOutput{
-		Message:    "OK",
-		StatusCode: 200,
-	}
+		Message: "OK",
+	}, nil
 }

@@ -3,20 +3,18 @@ package services
 import (
 	"errors"
 
-	domainErrors "gitlab.com/velo-company/services/events-service/internal/core/errors"
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
 )
 
 type CancelSubscriptionService interface {
-	Execute(input *CancelSubscriptionServiceInput) *CancelSubscriptionServiceOutput
+	Execute(input *CancelSubscriptionServiceInput) (*CancelSubscriptionServiceOutput, error)
 }
 type CancelSubscriptionServiceInput struct {
 	UserId  int
 	EventId int
 }
 type CancelSubscriptionServiceOutput struct {
-	Message    string `json:"message"`
-	StatusCode int    `json:"status_code"`
+	Message string `json:"message"`
 }
 type cancelSubscriptionService struct {
 	CancelSubscriptionPort ports.CancelSubscriptionPort
@@ -30,53 +28,22 @@ func NewCancelSubscriptionService(CancelSubscriptionPort ports.CancelSubscriptio
 	}
 }
 
-func (c cancelSubscriptionService) Execute(input *CancelSubscriptionServiceInput) *CancelSubscriptionServiceOutput {
+func (c cancelSubscriptionService) Execute(input *CancelSubscriptionServiceInput) (*CancelSubscriptionServiceOutput, error) {
 	exists, err := c.UserExistsByIdPort.Execute(input.UserId)
 	if err != nil {
-		return &CancelSubscriptionServiceOutput{
-			Message:    "Estamos enfrentando problemas no momento. Tente novamento mais tarde",
-			StatusCode: 502,
-		}
+		return nil, err
 	}
 	if !exists {
-		return &CancelSubscriptionServiceOutput{
-			Message:    "Este usuário não existe",
-			StatusCode: 404,
-		}
+		return nil, errors.New("Este usuário não existe")
 	}
 
 	err = c.CancelSubscriptionPort.Execute(input.EventId, input.UserId)
 
 	if err != nil {
-		if errors.Is(err, domainErrors.ErrBlockedCancelSubscription) {
-			return &CancelSubscriptionServiceOutput{
-				Message:    err.Error(),
-				StatusCode: 400,
-			}
-		}
-
-		if errors.Is(err, domainErrors.ErrEventNotFound) {
-			return &CancelSubscriptionServiceOutput{
-				Message:    err.Error(),
-				StatusCode: 404,
-			}
-		}
-
-		if errors.Is(err, domainErrors.ErrUserSubscriptionNotFound) {
-			return &CancelSubscriptionServiceOutput{
-				Message:    err.Error(),
-				StatusCode: 404,
-			}
-		}
-
-		return &CancelSubscriptionServiceOutput{
-			Message:    "Não foi possível cancelar sua inscrição",
-			StatusCode: 500,
-		}
+		return nil, err
 	}
 
 	return &CancelSubscriptionServiceOutput{
-		Message:    "OK",
-		StatusCode: 200,
-	}
+		Message: "OK",
+	}, nil
 }

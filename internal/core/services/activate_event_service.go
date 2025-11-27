@@ -1,13 +1,13 @@
 package services
 
 import (
-	goErrors "errors"
-	"gitlab.com/velo-company/services/events-service/internal/core/errors"
+	"errors"
+
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
 )
 
 type ActivateEventService interface {
-	Execute(input *ActivateEventServiceInput) *ActivateEventServiceOutput
+	Execute(input *ActivateEventServiceInput) (*ActivateEventServiceOutput, error)
 }
 
 type activateEventService struct {
@@ -25,49 +25,24 @@ type ActivateEventServiceInput struct {
 }
 
 type ActivateEventServiceOutput struct {
-	Message    string `json:"message"`
-	StatusCode int    `json:"status_code"`
+	Message string `json:"message"`
 }
 
-func (s activateEventService) Execute(input *ActivateEventServiceInput) *ActivateEventServiceOutput {
+func (s activateEventService) Execute(input *ActivateEventServiceInput) (*ActivateEventServiceOutput, error) {
 	exists, err := s.userExistsByIdPort.Execute(input.UserId)
 	if err != nil {
-		return &ActivateEventServiceOutput{
-			Message:    "Estamos enfrentando problemas no momento. Tente novamento mais tarde",
-			StatusCode: 502,
-		}
+		return nil, err
 	}
 	if !exists {
-		return &ActivateEventServiceOutput{
-			Message:    "Este usuário não existe",
-			StatusCode: 404,
-		}
+		return nil, errors.New("Este usuário não existe")
 	}
 
 	err = s.activateEventPort.Execute(input.EventId)
 	if err != nil {
-		if goErrors.Is(err, errors.ErrEventNotFound) {
-			return &ActivateEventServiceOutput{
-				Message:    errors.ErrEventNotFound.Error(),
-				StatusCode: 404,
-			}
-		}
-
-		if goErrors.Is(err, errors.ErrBlockedActivateEvent) {
-			return &ActivateEventServiceOutput{
-				Message:    errors.ErrBlockedActivateEvent.Error(),
-				StatusCode: 400,
-			}
-		}
-
-		return &ActivateEventServiceOutput{
-			Message:    "Não foi possível ativar o evento",
-			StatusCode: 500,
-		}
+		return nil, err
 	}
 
 	return &ActivateEventServiceOutput{
-		Message:    "OK",
-		StatusCode: 200,
-	}
+		Message: "OK",
+	}, nil
 }

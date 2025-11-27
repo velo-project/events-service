@@ -1,13 +1,14 @@
 package services
 
 import (
+	"errors"
 	"time"
 
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
 )
 
 type GetConfirmationCodeService interface {
-	Execute(input *GetConfirmationCodeInput) *GetConfirmationCodeOutput
+	Execute(input *GetConfirmationCodeInput) (*GetConfirmationCodeOutput, error)
 }
 
 type GetConfirmationCodeInput struct {
@@ -16,9 +17,7 @@ type GetConfirmationCodeInput struct {
 }
 
 type GetConfirmationCodeOutput struct {
-	Code       *string `json:"code"`
-	Message    string  `json:"message"`
-	StatusCode int     `json:"status_code"`
+	Code *string `json:"code"`
 }
 
 type getConfirmationCodeService struct {
@@ -33,46 +32,29 @@ func NewGetConfirmationCodeService(gc ports.GetConfirmationCodePort, up ports.Us
 	}
 }
 
-func (s *getConfirmationCodeService) Execute(input *GetConfirmationCodeInput) *GetConfirmationCodeOutput {
+func (s *getConfirmationCodeService) Execute(input *GetConfirmationCodeInput) (*GetConfirmationCodeOutput, error) {
 	exists, err := s.UserExistsByIdPort.Execute(input.UserId)
 	if err != nil {
-		return &GetConfirmationCodeOutput{
-			Message:    "Estamos enfrentando problemas no momento. Tente novamente mais tarde",
-			StatusCode: 502,
-		}
+		return nil, err
 	}
 	if !exists {
-		return &GetConfirmationCodeOutput{
-			Message:    "Este usuário não existe",
-			StatusCode: 404,
-		}
+		return nil, errors.New("Este usuário não existe")
 	}
 
 	code, eventDate, err := s.GetConfirmationCodePort.Execute(input.UserId, input.EventId)
 	if err != nil {
-		return &GetConfirmationCodeOutput{
-			Message:    "Não foi possível buscar o código de confirmação",
-			StatusCode: 500,
-		}
+		return nil, errors.New("Não foi possível buscar o código de confirmação")
 	}
 
 	if code == nil {
-		return &GetConfirmationCodeOutput{
-			Message:    "Inscrição não encontrada para este evento",
-			StatusCode: 404,
-		}
+		return nil, errors.New("Inscrição não encontrada para este evento")
 	}
 
 	if eventDate.Before(time.Now()) {
-		return &GetConfirmationCodeOutput{
-			Message:    "Este evento já ocorreu",
-			StatusCode: 410, // Gone
-		}
+		return nil, errors.New("Este evento já ocorreu")
 	}
 
 	return &GetConfirmationCodeOutput{
-		Code:       code,
-		Message:    "OK",
-		StatusCode: 200,
-	}
+		Code: code,
+	}, nil
 }

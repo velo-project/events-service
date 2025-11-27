@@ -62,6 +62,7 @@ func AuthMiddleware(roles []string) gin.HandlerFunc {
 		})
 
 		if err != nil {
+			sentry.CaptureException(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Token inválido: " + err.Error(), "status_code": http.StatusUnauthorized})
 			return
 		}
@@ -100,6 +101,7 @@ func AuthMiddleware(roles []string) gin.HandlerFunc {
 				num, err := strconv.Atoi(sub)
 
 				if err != nil {
+					sentry.CaptureException(err)
 					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Token inválido: " + err.Error(), "status_code": http.StatusUnauthorized})
 					return
 				}

@@ -2,11 +2,15 @@ package http
 
 import (
 	"database/sql"
+	"errors"
+	"net/http"
 	"strconv"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	"gitlab.com/velo-company/services/events-service/internal/adapters/database"
 	grpcadapter "gitlab.com/velo-company/services/events-service/internal/adapters/grpc"
+	customErrors "gitlab.com/velo-company/services/events-service/internal/core/errors"
 	"gitlab.com/velo-company/services/events-service/internal/core/services"
 	"google.golang.org/grpc"
 )
@@ -35,14 +39,14 @@ func NewSubscribeEventHandler(db *sql.DB, grpc *grpc.ClientConn) *SubscribeEvent
 func (h *SubscribeEventHandler) Handle(c *gin.Context) {
 	userId, exists := c.Get("userId")
 	if !exists {
-		c.JSON(401, gin.H{"message": "Usuário não está no contexto", "status_code": 401})
+		c.JSON(401, gin.H{"message": "Usuário não está no contexto"})
 		return
 	}
 
 	eventIdStr := c.Param("id")
 	eventId, err := strconv.Atoi(eventIdStr)
 	if err != nil {
-		c.JSON(400, gin.H{"message": "ID de evento inválido", "status_code": 400})
+		c.JSON(400, gin.H{"message": "ID de evento inválido"})
 		return
 	}
 
@@ -55,7 +59,24 @@ func (h *SubscribeEventHandler) Handle(c *gin.Context) {
 		EventId: eventId,
 	}
 
-	output := service.Execute(&input)
+	output, err := service.Execute(&input)
+	if err != nil {
+		sentry.CaptureException(err)
+		if errors.Is(err, customErrors.ErrUserAlreadySubscribed) {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			return
+		}
+		if errors.Is(err, customErrors.ErrEventNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
+			return
+		}
+		if err.Error() == "Este usuário não existe" {
+			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Ocorreu um erro interno"})
+		return
+	}
 
-	c.JSON(output.StatusCode, output)
+	c.JSON(http.StatusCreated, output)
 }

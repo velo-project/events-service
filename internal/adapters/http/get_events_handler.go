@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	"gitlab.com/velo-company/services/events-service/internal/core/entities"
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
@@ -50,24 +51,28 @@ func (h *GetEventsHandler) Handle(c *gin.Context) {
 
 	recommendedEvents, err := h.getRecommendedEventsService.GetRecommendedEvents(userID)
 	if err != nil {
+		sentry.CaptureException(err)
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "failed to get recommended events", StatusCode: http.StatusInternalServerError})
 		return
 	}
 
 	trendingEvents, err := h.getTrendingEventsService.GetTrendingEvents()
 	if err != nil {
+		sentry.CaptureException(err)
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "failed to get trending events", StatusCode: http.StatusInternalServerError})
 		return
 	}
 
 	lastParticipatedEvents, err := h.getLastParticipatedEventsService.GetLastParticipatedEvents(userID)
 	if err != nil {
+		sentry.CaptureException(err)
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "failed to get last participated events", StatusCode: http.StatusInternalServerError})
 		return
 	}
 
 	subscribedEvents, err := h.getSubscribedEventsService.GetSubscribedEvents(userID)
 	if err != nil {
+		sentry.CaptureException(err)
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "failed to get subscribed events", StatusCode: http.StatusInternalServerError})
 		return
 	}

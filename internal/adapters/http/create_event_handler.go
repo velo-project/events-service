@@ -2,14 +2,18 @@ package http
 
 import (
 	"database/sql"
+	"errors"
+	"net/http"
 
 	"cloud.google.com/go/storage"
+	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	"github.com/google/generative-ai-go/genai"
 	"gitlab.com/velo-company/services/events-service/internal/adapters/ai"
 	"gitlab.com/velo-company/services/events-service/internal/adapters/database"
 	grpcadapter "gitlab.com/velo-company/services/events-service/internal/adapters/grpc"
 	storageAdapter "gitlab.com/velo-company/services/events-service/internal/adapters/storage"
+	customErrors "gitlab.com/velo-company/services/events-service/internal/core/errors"
 	"gitlab.com/velo-company/services/events-service/internal/core/services"
 	"google.golang.org/grpc"
 )
@@ -54,6 +58,7 @@ func (h *CreateEventHandler) Handle(c *gin.Context) {
 
 	image, err := file.Open()
 	if err != nil {
+		sentry.CaptureException(err)
 		c.JSON(500, gin.H{"message": "Falha ao abrir a imagem", "status_code": 500})
 		return
 	}
@@ -82,7 +87,24 @@ func (h *CreateEventHandler) Handle(c *gin.Context) {
 	userExistsByIdPort := grpcadapter.NewUserExistsByIdAdapter(h.grpc)
 	service := services.NewCreateEventService(createEventPort, embeddingsGenerator, saveFileAdapter, userExistsByIdPort)
 
-	output := service.Execute(&input)
+	output, err := service.Execute(&input)
+	if err != nil {
+		sentry.CaptureException(err)
+		if errors.Is(err, customErrors.ErrEventNotCreated) {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+			return
+		}
+		if err.Error() == "Este usuário não existe" {
+			c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
+			return
+		}
+		if err.Error() == "Extensão de imagem inválida" {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Ocorreu um erro interno"})
+		return
+	}
 
-	c.JSON(output.StatusCode, output)
+	c.JSON(http.StatusCreated, output)
 }

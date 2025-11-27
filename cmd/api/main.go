@@ -120,7 +120,7 @@ func main() {
 	getSubscribedEventsService := services.NewGetSubscribedEventsService(getSubscribedEventsAdapter)
 
 	subscribeHandler := http.NewSubscribeEventHandler(db, grpcConn)
-	cancelSubscriptionHandler := http.NewCancelSubscriptionHandler(db)
+	cancelSubscriptionHandler := http.NewCancelSubscriptionHandler(db, grpcConn)
 	confirmSubscriptionHandler := http.NewConfirmSubscriptionHandler(db, grpcConn)
 	getConfirmationCodeHandler := http.NewGetConfirmationCodeHandler(db, grpcConn)
 	createEventHandler := http.NewCreateEventHandler(db, embeddingsModel, bucket, grpcConn)
@@ -143,7 +143,7 @@ func main() {
 		pr.GET("/events", getEventsHandler.Handle)
 	}
 
-	r.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler))
+	pr.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler))
 
 	port := os.Getenv("PORT")
 	if port == "" {

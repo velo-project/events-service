@@ -1,16 +1,18 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"time"
 
 	"gitlab.com/velo-company/services/events-service/internal/core/entities"
+	customErrors "gitlab.com/velo-company/services/events-service/internal/core/errors"
 	"gitlab.com/velo-company/services/events-service/internal/core/ports"
 )
 
 type CreateEventService interface {
-	Execute(input *CreateEventServiceInput) *CreateEventServiceOutput
+	Execute(input *CreateEventServiceInput) (*CreateEventServiceOutput, error)
 }
 
 type createEventService struct {
@@ -33,7 +35,7 @@ type CreateEventServiceInput struct {
 type CreateEventServiceOutput struct {
 	Message    string `json:"message"`
 	EventId    *int   `json:"event_id"`
-	StatusCode int    `json:"status_code"`
+	StatusCode int    `json:"-"`
 }
 
 func NewCreateEventService(ce ports.CreateEventPort, eg ports.EmbeddingsGenerator, sf ports.SaveFilePort, ue ports.UserExistsByIdPort) CreateEventService {
@@ -45,19 +47,13 @@ func NewCreateEventService(ce ports.CreateEventPort, eg ports.EmbeddingsGenerato
 	}
 }
 
-func (s createEventService) Execute(input *CreateEventServiceInput) *CreateEventServiceOutput {
+func (s createEventService) Execute(input *CreateEventServiceInput) (*CreateEventServiceOutput, error) {
 	exists, err := s.UserExistsByIdPort.Execute(input.UserId)
 	if err != nil {
-		return &CreateEventServiceOutput{
-			Message:    "Estamos enfrentando problemas no momento. Tente novamento mais tarde",
-			StatusCode: 502,
-		}
+		return nil, err
 	}
 	if !exists {
-		return &CreateEventServiceOutput{
-			Message:    "Este usuário não existe",
-			StatusCode: 404,
-		}
+		return nil, errors.New("Este usuário não existe")
 	}
 	// TODO: Add date parsing and validation
 	textToEmbeddings := fmt.Sprintf("%s %s", input.Name, deref(input.Description))
@@ -66,10 +62,7 @@ func (s createEventService) Execute(input *CreateEventServiceInput) *CreateEvent
 	})
 
 	if err != nil {
-		return &CreateEventServiceOutput{
-			Message:    "Não foi possível criar esse evento",
-			StatusCode: 500,
-		}
+		return nil, customErrors.ErrEventNotCreated
 	}
 
 	event := entities.Event{
@@ -82,18 +75,12 @@ func (s createEventService) Execute(input *CreateEventServiceInput) *CreateEvent
 
 	if input.Image != nil {
 		if !isValidExtension(input.ImageExtension) {
-			return &CreateEventServiceOutput{
-				Message:    "Extensão de imagem inválida",
-				StatusCode: 400,
-			}
+			return nil, errors.New("Extensão de imagem inválida")
 		}
 
 		imageUrl, err := s.SaveFilePort.Execute(input.Image)
 		if err != nil {
-			return &CreateEventServiceOutput{
-				Message:    "Não foi possível salvar a imagem",
-				StatusCode: 500,
-			}
+			return nil, customErrors.ErrEventNotCreated
 		}
 		event.ImageURL = imageUrl
 	}
@@ -101,17 +88,13 @@ func (s createEventService) Execute(input *CreateEventServiceInput) *CreateEvent
 	eventId, err := s.CreateEventPort.Execute(&event)
 
 	if err != nil {
-		return &CreateEventServiceOutput{
-			Message:    "Não foi possível criar esse evento",
-			StatusCode: 500,
-		}
+		return nil, customErrors.ErrEventNotCreated
 	}
 
 	return &CreateEventServiceOutput{
-		Message:    "Evento criado com sucesso",
-		EventId:    eventId,
-		StatusCode: 201,
-	}
+		Message: "Evento criado com sucesso",
+		EventId: eventId,
+	}, nil
 }
 
 func isValidExtension(ext string) bool {
