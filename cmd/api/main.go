@@ -130,17 +130,17 @@ func main() {
 	getEventsHandler := http.NewGetEventsHandler(getRecommendedEventsService, getTrendingEventsService, getLastParticipatedEventsService, getSubscribedEventsService, bucketName)
 
 	pr := r.Group("/api/events/v1")
-	pr.Use(http.AuthMiddleware([]string{"USER", "ADMIN"}))
+	pr.Use(http.AuthMiddleware())
 	{
 		pr.POST("/subscribe/:id", subscribeHandler.Handle)
 		pr.POST("/cancel-subscription/:id", cancelSubscriptionHandler.Handle)
 		pr.POST("/confirm-subscription/:id", confirmSubscriptionHandler.Handle)
 		pr.GET("/confirmation-code/:id", getConfirmationCodeHandler.Handle)
-		pr.POST("/create", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), createEventHandler.Handle)
-		pr.PATCH("/cancel/:id", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), cancelEventHandler.Handle)
-		pr.PATCH("/suspend/:id", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), suspendEventHandler.Handle)
-		pr.PATCH("/activate/:id", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), activateEventHandler.Handle)
-	pr.GET("/events", getEventsHandler.Handle)
+		pr.POST("/create", createEventHandler.Handle)
+		pr.PATCH("/cancel/:id", cancelEventHandler.Handle)
+		pr.PATCH("/suspend/:id", suspendEventHandler.Handle)
+		pr.PATCH("/activate/:id", activateEventHandler.Handle)
+		pr.GET("/events", getEventsHandler.Handle)
 	}
 
 	r.GET("/api/events/v1/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler))

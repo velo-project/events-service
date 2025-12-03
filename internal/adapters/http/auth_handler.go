@@ -39,7 +39,7 @@ func init() {
 	log.Println("Successfully loaded RSA public key for JWT verification.")
 }
 
-func AuthMiddleware(roles []string) gin.HandlerFunc {
+func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		authHeader := c.GetHeader("Authorization")
@@ -68,25 +68,6 @@ func AuthMiddleware(roles []string) gin.HandlerFunc {
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			if len(roles) > 0 {
-				if role, ok := claims["role"].(string); ok {
-					hasRole := false
-					for _, r := range roles {
-						if r == role {
-							hasRole = true
-							break
-						}
-					}
-					if !hasRole {
-						c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"message": "Proibido", "status_code": http.StatusForbidden})
-						return
-					}
-				} else {
-					c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"message": "Proibido", "status_code": http.StatusForbidden})
-					return
-				}
-			}
-
 			if email, ok := claims["email"].(string); ok {
 
 				c.Set("email", email)
