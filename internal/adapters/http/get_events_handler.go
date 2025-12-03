@@ -14,6 +14,7 @@ type GetEventsHandler struct {
 	getTrendingEventsService        ports.GetTrendingEventsService
 	getLastParticipatedEventsService ports.GetLastParticipatedEventsService
 	getSubscribedEventsService      ports.GetSubscribedEventsService
+	bucketName                      string
 }
 
 func NewGetEventsHandler(
@@ -21,12 +22,14 @@ func NewGetEventsHandler(
 	getTrendingEventsService ports.GetTrendingEventsService,
 	getLastParticipatedEventsService ports.GetLastParticipatedEventsService,
 	getSubscribedEventsService ports.GetSubscribedEventsService,
+	bucketName string,
 ) *GetEventsHandler {
 	return &GetEventsHandler{
 		getRecommendedEventsService:     getRecommendedEventsService,
 		getTrendingEventsService:        getTrendingEventsService,
 		getLastParticipatedEventsService: getLastParticipatedEventsService,
 		getSubscribedEventsService:      getSubscribedEventsService,
+		bucketName:                      bucketName,
 	}
 }
 
@@ -55,6 +58,7 @@ func (h *GetEventsHandler) Handle(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "failed to get recommended events", StatusCode: http.StatusInternalServerError})
 		return
 	}
+	h.setFullImageURLs(recommendedEvents)
 
 	trendingEvents, err := h.getTrendingEventsService.GetTrendingEvents()
 	if err != nil {
@@ -62,6 +66,7 @@ func (h *GetEventsHandler) Handle(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "failed to get trending events", StatusCode: http.StatusInternalServerError})
 		return
 	}
+	h.setFullImageURLs(trendingEvents)
 
 	lastParticipatedEvents, err := h.getLastParticipatedEventsService.GetLastParticipatedEvents(userID)
 	if err != nil {
@@ -69,6 +74,7 @@ func (h *GetEventsHandler) Handle(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "failed to get last participated events", StatusCode: http.StatusInternalServerError})
 		return
 	}
+	h.setFullImageURLs(lastParticipatedEvents)
 
 	subscribedEvents, err := h.getSubscribedEventsService.GetSubscribedEvents(userID)
 	if err != nil {
@@ -76,6 +82,7 @@ func (h *GetEventsHandler) Handle(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "failed to get subscribed events", StatusCode: http.StatusInternalServerError})
 		return
 	}
+	h.setFullImageURLs(subscribedEvents)
 
 	response := GetEventsResponse{
 		RecommendedEvents:     recommendedEvents,
@@ -85,4 +92,17 @@ func (h *GetEventsHandler) Handle(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+func (h *GetEventsHandler) setFullImageURLs(events []entities.Event) {
+	for i := range events {
+		if events[i].ImageURL != nil && *events[i].ImageURL != "" {
+			fullURL := h.buildImageURL(*events[i].ImageURL)
+			events[i].ImageURL = &fullURL
+		}
+	}
+}
+
+func (h *GetEventsHandler) buildImageURL(objectName string) string {
+	return "https://storage.googleapis.com/" + h.bucketName + "/" + objectName
 }

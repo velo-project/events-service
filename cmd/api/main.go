@@ -127,7 +127,7 @@ func main() {
 	cancelEventHandler := http.NewCancelEventHandler(db, grpcConn)
 	suspendEventHandler := http.NewSuspendEventHandler(db, grpcConn)
 	activateEventHandler := http.NewActivateEventHandler(db, grpcConn)
-	getEventsHandler := http.NewGetEventsHandler(getRecommendedEventsService, getTrendingEventsService, getLastParticipatedEventsService, getSubscribedEventsService)
+	getEventsHandler := http.NewGetEventsHandler(getRecommendedEventsService, getTrendingEventsService, getLastParticipatedEventsService, getSubscribedEventsService, bucketName)
 
 	pr := r.Group("/api/events/v1")
 	pr.Use(http.AuthMiddleware([]string{"USER", "ADMIN"}))
@@ -140,10 +140,10 @@ func main() {
 		pr.PATCH("/cancel/:id", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), cancelEventHandler.Handle)
 		pr.PATCH("/suspend/:id", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), suspendEventHandler.Handle)
 		pr.PATCH("/activate/:id", http.AuthMiddleware([]string{"ENTERPRISE", "ADMIN"}), activateEventHandler.Handle)
-		pr.GET("/events", getEventsHandler.Handle)
+	pr.GET("/events", getEventsHandler.Handle)
 	}
 
-	pr.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/api/events/v1/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler))
 
 	port := os.Getenv("PORT")
 	if port == "" {
